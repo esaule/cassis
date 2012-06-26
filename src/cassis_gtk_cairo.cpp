@@ -24,11 +24,6 @@ private:
   //window size
   int sizeX, sizeY;
 
-  //position of the frame
-  double frameXl, frameXh, frameYl, frameYh;
-
-  //position of the pdfs' labels
-  double nameFontsize, nameXoffset, nameXspacing, nameYoffset, nameYspacing;
 
   //colors
   cairo_pattern_t * bgcolor;
@@ -44,13 +39,7 @@ private:
   int gameradius;
   int vertexradius;
 
-  int xoffset;
-  int yoffset;
-
-  double interTaskSpace;
-  double timeDilat;
-
-  int selected;
+  Cassis::Engine::Vertex selected;
 
 public:
   GtkWidget* getWidget()
@@ -70,23 +59,6 @@ public:
     g_signal_connect (G_OBJECT (imWind), "expose_event",
 		      G_CALLBACK (CassisDisplay::expose), this);
 
-    timeDilat = 10000;
-
-    xoffset = 0;
-    yoffset = 0;
-
-    interTaskSpace = 20;
-
-    frameXl=.07;
-    frameYl=.05;
-    frameXh=.95;
-    frameYh=.9;
-
-    nameFontsize = 20;
-    nameXoffset = .07;
-    nameYoffset = 0.1;
-    nameXspacing = 0;
-    nameYspacing = .05; 
       
     bgcolor = cairo_pattern_create_rgb(1,1,1);
     fgcolor = cairo_pattern_create_rgb(0,0,0);
@@ -142,9 +114,6 @@ public:
   {
     int m = matchVertex(x, y);
 
-    std::cout<<"button press event at "<<x<<" "<<y
-	     <<" "<<m<<std::endl;
-
     if (gs.gameOver())
       return;
 
@@ -179,8 +148,6 @@ public:
  		     event->area.width, event->area.height);
     cairo_clip (cr);
     
-    //    cairo_translate(cr, g->imWind->allocation.x, g->imWind->allocation.y);
-
     g->sizeX = g->imWind->allocation.width;
     g->sizeY = g->imWind->allocation.height;
 
@@ -265,20 +232,14 @@ public:
     int xcand, ycand;
     Cassis::Engine::Vertex ret = -1;
 
-    std::cout<<"vertexradius is "<<vertexradius<<'\n';
-
     for (Cassis::Engine::Vertex v = 0; v < gs.nbVertex(); ++v)
       {
 	centerOfVertex(v, xcand, ycand);
 	double distance_squared = (x-xcand)*(x-xcand) + (y-ycand)*(y-ycand);
 
-	std::cout<<"distance to "<<v<<" is "<<distance_squared<<'\n';
-	
 	if (distance_squared <= vertexradius * vertexradius)
 	  ret = v;
       }
-
-    std::cout<<std::flush;
 
     return ret;
   }
