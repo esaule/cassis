@@ -116,6 +116,19 @@ namespace Cassis{
 	    }
       return UNCOLORED;
     }
+
+    Color GameState::winner() const
+    {
+      Vertex x,y,z;
+
+      return winner(x,y,z);
+    }
+
+
+    bool GameState::gameOver() const
+    {
+      return winner() != UNCOLORED;
+    }
     
     void GameState::play (Vertex i, Vertex j, Color c) throw (InvalidParameter)
     {

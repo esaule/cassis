@@ -58,9 +58,19 @@ namespace Cassis
       ///@return the color of edge (i,j)
       Color edge(Vertex i, Vertex j) const throw (InvalidParameter);
 
-      ///@brief returns the winner of the game. If there is a winner, the vertices that made a triangle are returned in x,y,z. Otherwise their value are undetermined
+      ///@brief returns the winner of the game. If there is a winner, the vertices that made a triangle are returned in x,y,z with x < y < z. Otherwise their value are undetermined
       ///@return UNCOLORED if no winner
       Color winner(Vertex& x, Vertex& y, Vertex& z) const;
+
+      ///@brief returns the winner of the game.
+      ///@return UNCOLORED if no winner
+      Color winner() const;
+
+
+      ///@brief tells if one player won (any player)
+      ///@return true is anybody won
+      bool gameOver() const;
+
 
       ///@brief returns the color of the player whose turn it is
       ///@return either PLAYER1 or PLAYER2

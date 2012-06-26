@@ -145,6 +145,9 @@ public:
     std::cout<<"button press event at "<<x<<" "<<y
 	     <<" "<<m<<std::endl;
 
+    if (gs.gameOver())
+      return;
+
     if (m == -1)
       return;
     if (selected == -1)
@@ -213,23 +216,48 @@ public:
 
   void displayStatus(cairo_t* cr)
   {
-    std::stringstream ss;
-    ss<<"Player ";
-    if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
+    Cassis::Engine::Vertex x,y,z;
+    Cassis::Engine::Color win = gs.winner();
+    if (win == Cassis::Engine::UNCOLORED)
       {
-	cairo_set_source(cr, colorp1);
-	ss<<'1';
+	std::stringstream ss;
+	ss<<"Player ";
+	if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
+	  {
+	    cairo_set_source(cr, colorp1);
+	    ss<<'1';
+	  }
+	else
+	  {
+	    cairo_set_source(cr, colorp2);
+	    ss<<'2';
+	  }
+	
+	ss<<"'s turn";
+	
+	cairo_move_to(cr, 30, 30);
+	scaled_show_text(cr, ss.str());
       }
     else
       {
-	cairo_set_source(cr, colorp2);
-	ss<<'2';
-      }
+	std::stringstream ss;
+	ss<<"Player ";
+	if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
+	  {
+	    ss<<'1';
+	  }
+	else
+	  {
+	    ss<<'2';
+	  }
 
-    ss<<"'s turn";
-    
-    cairo_move_to(cr, 30, 30);
-    scaled_show_text(cr, ss.str());
+	cairo_set_source(cr, fgcolor);
+	
+	ss<<" won !";
+	
+	cairo_move_to(cr, 30, 30);
+	scaled_show_text(cr, ss.str());
+      }
   }
 
   Cassis::Engine::Vertex matchVertex(int x, int y)
@@ -274,12 +302,37 @@ public:
 	int y;
 	centerOfVertex (v, x, y);
 	cairo_arc (cr, x,y , vertexradius, 0., 2 * M_PI);	
+	    cairo_save(cr);
+	    if (v == selected)
+	      {
+		switch (gs.whoseTurn())
+		  {
+		  case Cassis::Engine::PLAYER1:
+		    cairo_set_source(cr, colorp1);
+		    break;
+		  case Cassis::Engine::PLAYER2:
+		    cairo_set_source(cr, colorp2);
+		    break;
+		  }
+	      }
+	    else
+	      {
+		cairo_set_source(cr, bgcolor);
+	      }
+	    cairo_fill_preserve(cr);
+	    cairo_restore(cr);
+
 	cairo_stroke (cr);
       }
   }
 
   void printEdges(cairo_t* cr)
   {
+    Cassis::Engine::Vertex x,y,z;
+    Cassis::Engine::Color c = gs.winner(x,y,z);
+    
+    cairo_save(cr);
+    
     for (Cassis::Engine::Vertex u = 0; u < gs.nbVertex(); ++u)
       for (Cassis::Engine::Vertex v = u+1; v < gs.nbVertex(); ++v)
       {
@@ -288,6 +341,15 @@ public:
 	if (c == Cassis::Engine::PLAYER1) cairo_set_source(cr, colorp1);
 	if (c == Cassis::Engine::PLAYER2) cairo_set_source(cr, colorp2);
 	
+	cairo_set_line_width(cr, 3);
+
+	if (c != Cassis::Engine::UNCOLORED)
+	  {
+	    if ((u == x && v == y) ||
+		(u == x && v == z) ||
+		(u == y && v == z))
+	      cairo_set_line_width(cr, 7);
+	  }
 	  
 	int x_u;
 	int y_u;
@@ -302,6 +364,8 @@ public:
 	
 	cairo_stroke(cr);	
       }
+
+    cairo_restore(cr);
   }
 
 
