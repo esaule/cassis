@@ -8,7 +8,7 @@ CFLAGS += $(GTK_INCLUDE)
 CXXFLAGS += $(GTK_INCLUDE)
 LDFLAGS += $(GTK_LIB) $(X11_LIB)
 
-OBJS = cassis_gtk_cairo.o GameState.o
+OBJS = cassis_gtk_cairo.o GameState.o IA.o
 
 
 

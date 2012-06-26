@@ -14,6 +14,7 @@
 #include <gtk/gtk.h>
 
 #include "GameState.hpp"
+#include "IA.hpp"
 
 class CassisDisplay
 {
@@ -24,7 +25,6 @@ private:
   //window size
   int sizeX, sizeY;
 
-
   //colors
   cairo_pattern_t * bgcolor;
   cairo_pattern_t * fgcolor;
@@ -33,6 +33,7 @@ private:
   cairo_pattern_t * colorp2;
 
   Cassis::Engine::GameState gs;
+  Cassis::IA::IA* ia;
 
   int gamecenterx;
   int gamecentery;
@@ -49,6 +50,7 @@ public:
 
   CassisDisplay()
   {
+    ia = new Cassis::IA::SimpleIA();
     selected = -1;
     gamecenterx = gamecentery = 200;
     gameradius = 100;
@@ -75,6 +77,7 @@ public:
 
     cairo_pattern_destroy(colorp1);   
     cairo_pattern_destroy(colorp2);
+    delete ia;
   }
 
   void show()
@@ -128,6 +131,23 @@ public:
       gs.play(selected, m, gs.whoseTurn());
     }catch (Cassis::Engine::InvalidParameter)
       {}
+
+    if ( ! gs.gameOver())
+      {
+	while (gs.whoseTurn() != Cassis::Engine::PLAYER1)
+	  {
+	    std::cout<<"IA's turn"<<std::endl;
+	    try
+	      {
+		ia->play(gs);
+	      }
+	    catch (Cassis::Engine::InvalidParameter)
+	      {
+		std::cout<<"IA pooped itself"<<std::endl;
+	      }	
+	  }
+      }
+
     selected = -1;
   }
 
