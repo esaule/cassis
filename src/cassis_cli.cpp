@@ -6,7 +6,8 @@ int main()
 {
   Cassis::Engine::GameState gs;
   
-  while (gs.winner() != Cassis::Engine::UNCOLORED)
+  Cassis::Engine::Vertex x,y,z;
+  while (gs.winner(x,y,z) == Cassis::Engine::UNCOLORED)
     {
       Cassis::Engine::Color pl = gs.whoseTurn();
       assert (pl != Cassis::Engine::UNCOLORED);
@@ -28,10 +29,12 @@ int main()
 	}
     }
 
-  if (gs.winner() == Cassis::Engine::PLAYER1)
+  if (gs.winner(x,y,z) == Cassis::Engine::PLAYER1)
     std::cout<<"Player 1 wins"<<std::endl;
   else
     std::cout<<"Player 2 wins"<<std::endl;
+
+  std::cout<<"Because of triangle "<<x<<" "<<y<<" "<<z<<std::endl; 
 
   return 0;
 }

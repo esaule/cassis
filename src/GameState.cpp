@@ -98,11 +98,11 @@ namespace Cassis{
 	}
     }
     
-    Color GameState::winner() const
+    Color GameState::winner(Vertex& x, Vertex& y, Vertex& z) const
     {
-      for (Vertex x = 0 ; x < nbVertex(); x++)
-	for (Vertex y = x+1 ; y < nbVertex(); y++)
-	  for (Vertex z = y+1 ; z < nbVertex(); z++)
+      for (x = 0 ; x < nbVertex(); x++)
+	for (y = x+1 ; y < nbVertex(); y++)
+	  for (z = y+1 ; z < nbVertex(); z++)
 	    {
 	      if (edge(x,y) != UNCOLORED
 		  && edge(x,y) == edge(x,z)
