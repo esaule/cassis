@@ -131,6 +131,7 @@ namespace Cassis{
       if (whoseTurn() != c) throw InvalidParameter();
       
       edgeLoc(i,j) = c;
+      turn++;
     }
     
   }
