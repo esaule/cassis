@@ -50,7 +50,7 @@ public:
 
   CassisDisplay()
   {
-    ia = new Cassis::IA::SimpleIA();
+    ia = new Cassis::IA::RandomIA();
     selected = -1;
     gamecenterx = gamecentery = 200;
     gameradius = 100;
