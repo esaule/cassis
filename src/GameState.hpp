@@ -31,7 +31,7 @@ namespace Cassis
     private:
       ///@brief throws exception if i is invalid
       ///@param i a valid vertex. 0 \leq i < nbVertex()
-      void validateVertex(Vertex i) const throw InvalidParameter;
+      void validateVertex(Vertex i) const throw (InvalidParameter);
 
       ///@brief returns a reference on a given edge. Note, the constraint i < j MUST be enforced prior to calling this function. (Or pay a segfault)
       ///@param i a valid vertex. 0 \leq i < nbVertex()
@@ -56,7 +56,7 @@ namespace Cassis
       ///@param i a valid vertex. 0 \leq i < nbVertex()
       ///@param j an other valid vertex. 0 \leq j < nbVertex(). i \neq j
       ///@return the color of edge (i,j)
-      Color edge(Vertex i, Vertex j) const throw InvalidParameter;
+      Color edge(Vertex i, Vertex j) const throw (InvalidParameter);
 
       ///@brief returns the winner of the game.
       ///@return UNCOLORED if no winner
@@ -71,7 +71,7 @@ namespace Cassis
       ///@param i a valid vertex. 0 \leq i < nbVertex()
       ///@param j an other valid vertex. 0 \leq j < nbVertex(). i \neq j
       ///@param c either PLAYER1 or PLAYER2
-      void play(Vertex i, Vertex j, Color c) throw InvalidParameter;
+      void play(Vertex i, Vertex j, Color c) throw (InvalidParameter);
 
       GameState();
       ~GameState();
