@@ -9,4 +9,5 @@ clean:
 	-rm cassis_cli
 
 depend:
-	make depends -Y .
+	makedepend *.cpp *.hpp -Y .
+# DO NOT DELETE

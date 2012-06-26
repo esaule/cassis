@@ -94,16 +94,6 @@ public:
     colorp1 = cairo_pattern_create_rgb(1,0,0);
     colorp2 = cairo_pattern_create_rgb(0,0,1);
 
-    try
-      {
-	gs.play(0, 1, Cassis::Engine::PLAYER1);
-	gs.play(2, 1, Cassis::Engine::PLAYER2);
-	gs.play(4, 3, Cassis::Engine::PLAYER1);
-      }
-    catch (Cassis::Engine::InvalidParameter)
-      {
-	std::cout<<"invalid moves"<<std::endl;
-      }
   }
 
   ~CassisDisplay()
@@ -140,14 +130,33 @@ public:
   {
     CassisDisplay* g = (CassisDisplay*)data;
 
-    std::cout<<"button press event at "<<event->x<<" "<<event->y<<std::endl;
-
-    int s = g->matchVertex(x,y);
+    g->clickat(event->x, event->y);
     
     gtk_widget_grab_focus(widget);
     gtk_widget_queue_draw (g->getWidget());
 
     return TRUE;
+  }
+
+  void clickat(int x, int y)
+  {
+    int m = matchVertex(x, y);
+
+    std::cout<<"button press event at "<<x<<" "<<y
+	     <<" "<<m<<std::endl;
+
+    if (m == -1)
+      return;
+    if (selected == -1)
+      {
+	selected = m; 
+	return;
+      }
+    try{
+      gs.play(selected, m, gs.whoseTurn());
+    }catch (Cassis::Engine::InvalidParameter)
+      {}
+    selected = -1;
   }
 
 
@@ -167,7 +176,7 @@ public:
  		     event->area.width, event->area.height);
     cairo_clip (cr);
     
-    cairo_translate(cr, g->imWind->allocation.x, g->imWind->allocation.y);
+    //    cairo_translate(cr, g->imWind->allocation.x, g->imWind->allocation.y);
 
     g->sizeX = g->imWind->allocation.width;
     g->sizeY = g->imWind->allocation.height;
@@ -207,9 +216,17 @@ public:
     std::stringstream ss;
     ss<<"Player ";
     if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
-      ss<<'1';
+      {
+	cairo_set_source(cr, colorp1);
+	ss<<'1';
+      }
     else
-      ss<<'2';
+      {
+	cairo_set_source(cr, colorp2);
+	ss<<'2';
+      }
+
+    ss<<"'s turn";
     
     cairo_move_to(cr, 30, 30);
     scaled_show_text(cr, ss.str());
@@ -220,14 +237,20 @@ public:
     int xcand, ycand;
     Cassis::Engine::Vertex ret = -1;
 
+    std::cout<<"vertexradius is "<<vertexradius<<'\n';
+
     for (Cassis::Engine::Vertex v = 0; v < gs.nbVertex(); ++v)
       {
 	centerOfVertex(v, xcand, ycand);
 	double distance_squared = (x-xcand)*(x-xcand) + (y-ycand)*(y-ycand);
+
+	std::cout<<"distance to "<<v<<" is "<<distance_squared<<'\n';
 	
-	if (distance_squared < vertexradius)
+	if (distance_squared <= vertexradius * vertexradius)
 	  ret = v;
       }
+
+    std::cout<<std::flush;
 
     return ret;
   }
@@ -293,55 +316,7 @@ public:
     printEdges(cr);
     printVertices(cr);
     
-    //    cairo_translate(cr, -xoffset, -yoffset);
-
-    // for (std::vector<taskinfo>::const_iterator it = graphs.begin();
-    // 	 it != graphs.end();
-    // 	 it++)
-    //   {
-    // 	const taskinfo& t = *it;
-
-    // 	//	std::cout<<t.id<<" "<<time_to_x(t.release)<<std::endl;
-    // 	//waiting line
-    // 	cairo_set_source(cr, colors[0]);
-    // 	cairo_move_to (cr, time_to_x(t.release), t.id*interTaskSpace);
-    // 	cairo_line_to (cr, time_to_x(t.start), t.id*interTaskSpace);
-    // 	cairo_stroke(cr);
-
-    // 	//processing line
-    // 	cairo_set_source(cr, colors[2]);
-    // 	cairo_move_to (cr, time_to_x(t.start), t.id*interTaskSpace);
-    // 	cairo_line_to (cr, time_to_x(t.completion), t.id*interTaskSpace);
-    // 	cairo_stroke(cr);
-
-    // 	//write ID number
-    // 	{
-    // 	  cairo_set_source(cr, fgcolor);
-    // 	  cairo_move_to(cr, time_to_x(t.release) - 20, t.id*interTaskSpace);
-    // 	  std::stringstream ss;
-    // 	  ss<<t.id;
-    // 	  scaled_show_text(cr,ss.str());
-    // 	}
-
-    // 	//write m
-    // 	{
-    // 	  cairo_set_source(cr, fgcolor);
-    // 	  cairo_move_to(cr, time_to_x(t.start) + 20, t.id*interTaskSpace);
-    // 	  std::stringstream ss;
-    // 	  ss<<"["<<t.release<<" , "<<t.completion<<"] / "<<t.start;
-    // 	  ss<<" m = "<<t.m;
-    // 	  timetype f = (t.completion-t.release);
-    // 	  //	  ss<<" f = "<<f;
-    // 	  //	  ss<<" p1 = "<<t.p1;
-    // 	  ss<<" s = "<<((double)f)/t.p1;
-    // 	  scaled_show_text(cr,ss.str());
-    // 	}
-
-    //   }
-	   
-
     displayStatus(cr);
-    
   }
 
 };
