@@ -124,7 +124,10 @@ namespace Cassis{
       validateVertex(i);
       validateVertex(j);
       if (j < i)
-	play (j,i,c);
+	{
+	  play (j,i,c);
+	  return;
+	}
       
       //assert (i<j);
       if (edgeLoc(i,j) != UNCOLORED) throw InvalidParameter();
