@@ -1,3 +1,4 @@
+#include <math.h>
 #include <gtk/gtk.h>
 #include <list>
 #include <vector>
@@ -12,7 +13,9 @@
 
 #include <gtk/gtk.h>
 
-class GraphDisplay
+#include "GameState.hpp"
+
+class CassisDisplay
 {
 private:
   GdkImage *im;
@@ -31,9 +34,15 @@ private:
   cairo_pattern_t * bgcolor;
   cairo_pattern_t * fgcolor;
 
-  cairo_pattern_t * colors[4];
+  cairo_pattern_t * colorp1;
+  cairo_pattern_t * colorp2;
 
-  
+  Cassis::Engine::GameState gs;
+
+  int gamecenterx;
+  int gamecentery;
+  int gameradius;
+  int vertexradius;
 
   int xoffset;
   int yoffset;
@@ -41,18 +50,25 @@ private:
   double interTaskSpace;
   double timeDilat;
 
+  int selected;
+
 public:
   GtkWidget* getWidget()
   {
     return imWind;
   }
 
-  GraphDisplay()
+  CassisDisplay()
   {
+    selected = -1;
+    gamecenterx = gamecentery = 200;
+    gameradius = 100;
+    vertexradius = 20;
+
     imWind = gtk_label_new("You should not see this message!");
 
     g_signal_connect (G_OBJECT (imWind), "expose_event",
-		      G_CALLBACK (GraphDisplay::expose), this);
+		      G_CALLBACK (CassisDisplay::expose), this);
 
     timeDilat = 10000;
 
@@ -75,21 +91,28 @@ public:
     bgcolor = cairo_pattern_create_rgb(1,1,1);
     fgcolor = cairo_pattern_create_rgb(0,0,0);
 
-    colors[0]=cairo_pattern_create_rgb(0,0,0);
-    colors[1]=cairo_pattern_create_rgb(1,0,0);
-    colors[2]=cairo_pattern_create_rgb(0,1,0);
-    colors[3]=cairo_pattern_create_rgb(0,0,1);
+    colorp1 = cairo_pattern_create_rgb(1,0,0);
+    colorp2 = cairo_pattern_create_rgb(0,0,1);
+
+    try
+      {
+	gs.play(0, 1, Cassis::Engine::PLAYER1);
+	gs.play(2, 1, Cassis::Engine::PLAYER2);
+	gs.play(4, 3, Cassis::Engine::PLAYER1);
+      }
+    catch (Cassis::Engine::InvalidParameter)
+      {
+	std::cout<<"invalid moves"<<std::endl;
+      }
   }
 
-  ~GraphDisplay()
+  ~CassisDisplay()
   {
     cairo_pattern_destroy(bgcolor);
     cairo_pattern_destroy(fgcolor);
 
-    cairo_pattern_destroy(colors[0]);   
-    cairo_pattern_destroy(colors[1]);
-    cairo_pattern_destroy(colors[2]);
-    cairo_pattern_destroy(colors[3]);
+    cairo_pattern_destroy(colorp1);   
+    cairo_pattern_destroy(colorp2);
   }
 
   void show()
@@ -102,7 +125,7 @@ public:
   static gboolean
   key_press (GtkWidget *widget, GdkEventKey *event, gpointer data)
   {
-    GraphDisplay* g = (GraphDisplay*)data;
+    CassisDisplay* g = (CassisDisplay*)data;
 
     std::cout << event->hardware_keycode<<std::endl;
 
@@ -115,21 +138,23 @@ public:
   static gboolean
   button_press (GtkWidget *widget, GdkEventButton *event, gpointer data)
   {
-    GraphDisplay* g = (GraphDisplay*)data;
+    CassisDisplay* g = (CassisDisplay*)data;
 
-    std::cout<<"button press event"<<std::endl;
+    std::cout<<"button press event at "<<event->x<<" "<<event->y<<std::endl;
 
+    int s = g->matchVertex(x,y);
+    
     gtk_widget_grab_focus(widget);
+    gtk_widget_queue_draw (g->getWidget());
 
     return TRUE;
-
   }
 
 
   static gboolean
   expose (GtkWidget *widget, GdkEventExpose *event, gpointer data)
   {
-    GraphDisplay* g = (GraphDisplay*)data;
+    CassisDisplay* g = (CassisDisplay*)data;
 
     cairo_t *cr;
     /* get a cairo_t */  
@@ -177,10 +202,85 @@ public:
     cairo_restore(cr);
   }
 
-  // double time_to_x (timetype time)
-  // {
-  //   return ((double)time)/timeDilat;
-  // }
+  void displayStatus(cairo_t* cr)
+  {
+    std::stringstream ss;
+    ss<<"Player ";
+    if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
+      ss<<'1';
+    else
+      ss<<'2';
+    
+    cairo_move_to(cr, 30, 30);
+    scaled_show_text(cr, ss.str());
+  }
+
+  Cassis::Engine::Vertex matchVertex(int x, int y)
+  {
+    int xcand, ycand;
+    Cassis::Engine::Vertex ret = -1;
+
+    for (Cassis::Engine::Vertex v = 0; v < gs.nbVertex(); ++v)
+      {
+	centerOfVertex(v, xcand, ycand);
+	double distance_squared = (x-xcand)*(x-xcand) + (y-ycand)*(y-ycand);
+	
+	if (distance_squared < vertexradius)
+	  ret = v;
+      }
+
+    return ret;
+  }
+
+  void centerOfVertex(Cassis::Engine::Vertex v, int& x, int& y)
+  {
+    double angle_in_degree = v*360.0/gs.nbVertex();
+    double angle_in_radian = angle_in_degree * (M_PI / 180.);
+
+    x = gamecenterx + gameradius * cos(angle_in_radian);
+    y = gamecentery + gameradius * sin(angle_in_radian);
+  }
+
+  void printVertices(cairo_t* cr)
+  {
+    cairo_set_source(cr, fgcolor);
+
+    for (Cassis::Engine::Vertex v = 0; v < gs.nbVertex(); ++v)
+      {
+	int x;
+	int y;
+	centerOfVertex (v, x, y);
+	cairo_arc (cr, x,y , vertexradius, 0., 2 * M_PI);	
+	cairo_stroke (cr);
+      }
+  }
+
+  void printEdges(cairo_t* cr)
+  {
+    for (Cassis::Engine::Vertex u = 0; u < gs.nbVertex(); ++u)
+      for (Cassis::Engine::Vertex v = u+1; v < gs.nbVertex(); ++v)
+      {
+	Cassis::Engine::Color c = gs.edge(u,v);
+	if (c == Cassis::Engine::UNCOLORED) continue;
+	if (c == Cassis::Engine::PLAYER1) cairo_set_source(cr, colorp1);
+	if (c == Cassis::Engine::PLAYER2) cairo_set_source(cr, colorp2);
+	
+	  
+	int x_u;
+	int y_u;
+	centerOfVertex (u, x_u, y_u);
+	
+	int x_v;
+	int y_v;
+	centerOfVertex (v, x_v, y_v);
+
+	cairo_move_to(cr, x_u, y_u);
+	cairo_line_to(cr, x_v, y_v);
+	
+	cairo_stroke(cr);	
+      }
+  }
+
 
   void render(cairo_t* cr)
   { 
@@ -189,8 +289,11 @@ public:
     cairo_paint(cr);
 
     cairo_set_source(cr, fgcolor);
+
+    printEdges(cr);
+    printVertices(cr);
     
-    cairo_translate(cr, -xoffset, -yoffset);
+    //    cairo_translate(cr, -xoffset, -yoffset);
 
     // for (std::vector<taskinfo>::const_iterator it = graphs.begin();
     // 	 it != graphs.end();
@@ -236,6 +339,8 @@ public:
 
     //   }
 	   
+
+    displayStatus(cr);
     
   }
 
@@ -262,13 +367,13 @@ main (int argc, char *argv[])
 		      GTK_SIGNAL_FUNC (destroy), NULL);
   gtk_container_border_width (GTK_CONTAINER (window), 10);
 
-  GraphDisplay g;
+  CassisDisplay g;
 
   g_signal_connect (G_OBJECT (window), "key-press-event",
-		    G_CALLBACK (GraphDisplay::key_press), &g);
+		    G_CALLBACK (CassisDisplay::key_press), &g);
   
   g_signal_connect (G_OBJECT (window), "button-press-event",
-		    G_CALLBACK (GraphDisplay::button_press), &g);
+		    G_CALLBACK (CassisDisplay::button_press), &g);
   
   
   
