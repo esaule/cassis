@@ -16,6 +16,29 @@ int main()
       else 
 	std::cout<<"Player 2's turn"<<std::endl;
 
+
+
+      for (Cassis::Engine::Vertex i = 0; i < gs.nbVertex(); ++i)
+	{
+	  for (Cassis::Engine::Vertex j = 0; j < gs.nbVertex(); ++j)
+	    {
+	      if (i == j)
+		std::cout<<' ';
+	      else
+		switch (gs.edge(i,j))
+		  {
+		  case Cassis::Engine::PLAYER1:
+		    std::cout<<'1';break;
+		  case Cassis::Engine::PLAYER2:
+		    std::cout<<'2';break;
+		  case Cassis::Engine::UNCOLORED:
+		    std::cout<<' ';break;
+		  }
+	    }
+	  std::cout<<'\n';
+	}
+      std::cout<<std::flush;
+
       Cassis::Engine::Vertex i, j;
 
       try
