@@ -1,0 +1,29 @@
+include Makefile.local
+
+GTK_INCLUDE = `pkg-config --cflags gtk+-2.0` `pkg-config --cflags cairo`
+GTK_LIB = `pkg-config --libs gtk+-2.0``pkg-config --libs cairo`
+
+CC = gcc -g -Wall
+CFLAGS += $(GTK_INCLUDE)
+CXXFLAGS += $(GTK_INCLUDE)
+LDFLAGS += $(GTK_LIB) $(X11_LIB)
+
+OBJS = cassis_gtk_cairo.o GameState.o
+
+
+
+CC=g++
+LD=g++
+
+all: cassis_gtk_cairo
+
+cassis_gtk_cairo: $(OBJS)
+	$(LD) $(GTK_LIB) $(X11_LIB) $(OBJS) -o cassis_gtk_cairo $(LDFLAGS)
+
+clean:
+	rm *.o *~
+
+
+depend:
+	makedepend -f Makefile.gtk *.cpp *.hpp -Y
+
