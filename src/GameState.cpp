@@ -107,7 +107,12 @@ namespace Cassis{
 	      if (edge(x,y) != UNCOLORED
 		  && edge(x,y) == edge(x,z)
 		  && edge(x,y) == edge(y,z))
-		return edge(x,y);
+		{
+		  if (edge(x,y) == PLAYER1)
+		    return PLAYER2;
+		  else
+		    return PLAYER1;
+		}
 	    }
       return UNCOLORED;
     }
