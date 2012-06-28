@@ -138,46 +138,52 @@ static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd) {
     memset(buffer->bits, 0, buffer->stride*pixel_size*buffer->height);
 
     /* Normalize our canvas size to make our lives easier */
-    cairo_scale(cr, buffer->width, buffer->height);
+    //    cairo_scale(cr, buffer->width, buffer->height);
 
 
-    /* Draw the big X */
-    double position = (tick%30)*(1.0/30);
-    cairo_set_source_rgba (cr, 0.5, 0.5, 0.5, 0.7);
-    cairo_move_to (cr, 0.1, position);
-    cairo_line_to (cr, 0.9, 1.0-position);
-    cairo_move_to (cr, 0.9, position);
-    cairo_line_to (cr, 0.1, 1.0-position);
-    cairo_set_line_width (cr, 0.1);
-    cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
-    cairo_stroke (cr);
+    cd->setSizeX (buffer->width);
+    cd->setSizeY (buffer->height);
 
-    /* Draw three color squares */
-    cairo_rectangle (cr, 0, 0,0.5, 0.5);
-    cairo_set_source_rgba (cr, 1, 0, 0, 0.50);
-    cairo_fill (cr);
+    cd->render(cr);
 
-    cairo_rectangle (cr, 0, 0.5, 0.5, 0.5);
-    cairo_set_source_rgba (cr, 0, 1, 0, 0.50);
-    cairo_fill (cr);
 
-    cairo_rectangle (cr, 0.5, 0, 0.5, 0.5);
-    cairo_set_source_rgba (cr, 0, 0, 1, 0.50);
-    cairo_fill (cr);
+    // /* Draw the big X */
+    // double position = (tick%30)*(1.0/30);
+    // cairo_set_source_rgba (cr, 0.5, 0.5, 0.5, 0.7);
+    // cairo_move_to (cr, 0.1, position);
+    // cairo_line_to (cr, 0.9, 1.0-position);
+    // cairo_move_to (cr, 0.9, position);
+    // cairo_line_to (cr, 0.1, 1.0-position);
+    // cairo_set_line_width (cr, 0.1);
+    // cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
+    // cairo_stroke (cr);
 
-    /* Draw a more complicated path */
-    cairo_set_line_width (cr, 0.04);
-    cairo_scale(cr, 0.5, 0.5);
-    cairo_translate(cr, 0.5, 1.0);
-    cairo_set_source_rgba (cr, 1.0, 0.2, 0.0, 0.5);
-    cairo_move_to (cr, 0.25, 0.25);
-    cairo_line_to (cr, 0.5, 0.375);
-    cairo_rel_line_to (cr, 0.25, -0.125);
-    cairo_arc (cr, 0.5, 0.5, 0.25 * sqrt(2), -0.25 * M_PI, 0.25 * M_PI);
-    cairo_rel_curve_to (cr, -0.25, -0.125, -0.25, 0.125, -0.5, 0);
-    cairo_close_path (cr);
-    cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
-    cairo_stroke (cr);
+    // /* Draw three color squares */
+    // cairo_rectangle (cr, 0, 0,0.5, 0.5);
+    // cairo_set_source_rgba (cr, 1, 0, 0, 0.50);
+    // cairo_fill (cr);
+
+    // cairo_rectangle (cr, 0, 0.5, 0.5, 0.5);
+    // cairo_set_source_rgba (cr, 0, 1, 0, 0.50);
+    // cairo_fill (cr);
+
+    // cairo_rectangle (cr, 0.5, 0, 0.5, 0.5);
+    // cairo_set_source_rgba (cr, 0, 0, 1, 0.50);
+    // cairo_fill (cr);
+
+    // /* Draw a more complicated path */
+    // cairo_set_line_width (cr, 0.04);
+    // cairo_scale(cr, 0.5, 0.5);
+    // cairo_translate(cr, 0.5, 1.0);
+    // cairo_set_source_rgba (cr, 1.0, 0.2, 0.0, 0.5);
+    // cairo_move_to (cr, 0.25, 0.25);
+    // cairo_line_to (cr, 0.5, 0.375);
+    // cairo_rel_line_to (cr, 0.25, -0.125);
+    // cairo_arc (cr, 0.5, 0.5, 0.25 * sqrt(2), -0.25 * M_PI, 0.25 * M_PI);
+    // cairo_rel_curve_to (cr, -0.25, -0.125, -0.25, 0.125, -0.5, 0);
+    // cairo_close_path (cr);
+    // cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
+    // cairo_stroke (cr);
 
     /* Clean up. */
     cairo_destroy(cr);
