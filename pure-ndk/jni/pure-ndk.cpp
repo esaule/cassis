@@ -13,6 +13,8 @@
 
 #include "cairo/src/cairo.h"
 
+#include "cassis_cairo.hpp"
+
 #define  LOG_TAG    "android-cairo-pure-ndk"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
@@ -21,7 +23,7 @@
 bool app_has_focus = false;
 int  tick          = 0;
 
-static void draw_frame(ANativeWindow_Buffer *buffer);
+static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd);
 static void handle_app_command(struct android_app* app, int32_t cmd);
 static int32_t handle_input(struct android_app* app, AInputEvent* event);
 
@@ -33,6 +35,8 @@ void android_main(struct android_app* app) {
     app->userData = NULL;
     app->onAppCmd = handle_app_command;
     app->onInputEvent = handle_input;
+
+    CassisDisplay cd;
 
     while (1) {
         // Read all pending events. If app_has_focus is true, then we are going 
@@ -68,7 +72,7 @@ void android_main(struct android_app* app) {
                 continue;
             }
 
-            draw_frame(&buffer);
+            draw_frame(&buffer, &cd);
 
             ANativeWindow_unlockAndPost(app->window);
         }
@@ -110,7 +114,7 @@ static int32_t handle_input(struct android_app* app, AInputEvent* event) {
 
 
 
-static void draw_frame(ANativeWindow_Buffer *buffer) {
+static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd) {
     int pixel_size = 0;
     cairo_surface_t *surface = NULL;
 

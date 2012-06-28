@@ -119,7 +119,7 @@ main (int argc, char *argv[])
 
 
 
-  g.show();
+   gtk_widget_show (imWind);
 
   gtk_container_add(GTK_CONTAINER(window), imWind);
   gtk_widget_show (window);

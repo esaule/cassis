@@ -1,3 +1,9 @@
+#ifndef CASSIS_CAIRO
+#define CASSIS_CAIRO
+
+#include "GameState.hpp"
+#include "IA.hpp"
+
 class CassisDisplay
 {
 private:
@@ -55,11 +61,11 @@ public:
     delete ia;
   }
 
-  void show()
-  {
-    gtk_widget_show (imWind);
+  //  void show()
+  //  {
+    //    gtk_widget_show (imWind);
     //    gtk_widget_show (drawing);
-  }
+  //  }
 
 
 
@@ -86,14 +92,14 @@ public:
       {
 	while (gs.whoseTurn() != Cassis::Engine::PLAYER1)
 	  {
-	    std::cout<<"IA's turn"<<std::endl;
+	    //std::cout<<"IA's turn"<<std::endl;
 	    try
 	      {
 		ia->play(gs);
 	      }
 	    catch (Cassis::Engine::InvalidParameter)
 	      {
-		std::cout<<"IA pooped itself"<<std::endl;
+		//		std::cout<<"IA pooped itself"<<std::endl;
 	      }	
 	  }
       }
@@ -114,17 +120,30 @@ public:
   }
 
 
-  void scaled_show_text (cairo_t *cr, const std::string &s)
+  // void scaled_show_text (cairo_t *cr, const std::string &s)
+  // {
+  //   double xwise = 1;
+  //   double ywise = 1;
+  //   cairo_save(cr);
+  //   cairo_device_to_user_distance (cr,&xwise,&ywise);
+   
+  //   cairo_scale(cr,xwise,ywise);
+  //   cairo_show_text (cr, s.c_str() );
+  //   cairo_restore(cr);
+  // }
+
+  void scaled_show_text (cairo_t *cr, char* s)
   {
     double xwise = 1;
     double ywise = 1;
     cairo_save(cr);
-    cairo_device_to_user_distance (cr,&xwise,&ywise);
+    cairo_device_to_user_distance (cr, &xwise, &ywise);
    
     cairo_scale(cr,xwise,ywise);
-    cairo_show_text (cr, s.c_str() );
+    cairo_show_text (cr, s );
     cairo_restore(cr);
   }
+
 
   void displayStatus(cairo_t* cr)
   {
@@ -132,43 +151,36 @@ public:
     Cassis::Engine::Color win = gs.winner();
     if (win == Cassis::Engine::UNCOLORED)
       {
-	std::stringstream ss;
-	ss<<"Player ";
+
+	cairo_move_to(cr, 30, 30);
+
 	if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
 	  {
 	    cairo_set_source(cr, colorp1);
-	    ss<<'1';
+	    scaled_show_text(cr, "Player 1's turn");
+
 	  }
 	else
 	  {
 	    cairo_set_source(cr, colorp2);
-	    ss<<'2';
+	    scaled_show_text(cr, "Player 1's turn");
 	  }
 	
-	ss<<"'s turn";
-	
-	cairo_move_to(cr, 30, 30);
-	scaled_show_text(cr, ss.str());
       }
     else
       {
-	std::stringstream ss;
-	ss<<"Player ";
+	cairo_set_source(cr, fgcolor);
+	cairo_move_to(cr, 30, 30);
+
 	if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
 	  {
-	    ss<<'1';
+
+	    scaled_show_text(cr, "Player 1 won!");
 	  }
 	else
 	  {
-	    ss<<'2';
+	    scaled_show_text(cr, "Player 2 won!");
 	  }
-
-	cairo_set_source(cr, fgcolor);
-	
-	ss<<" won !";
-	
-	cairo_move_to(cr, 30, 30);
-	scaled_show_text(cr, ss.str());
       }
   }
 
@@ -290,3 +302,5 @@ public:
   }
 
 };
+
+#endif
