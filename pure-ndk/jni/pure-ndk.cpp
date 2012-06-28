@@ -117,10 +117,12 @@ static void draw_frame(ANativeWindow_Buffer *buffer) {
     /* Setup our cairo surface to render directly to the native window buffer */
     if (buffer->format == WINDOW_FORMAT_RGB_565) {
         pixel_size = 2;
-        surface = cairo_image_surface_create_for_data(buffer->bits, CAIRO_FORMAT_RGB16_565, buffer->width, buffer->height, buffer->stride*pixel_size);
+        surface = cairo_image_surface_create_for_data((unsigned char*)buffer->bits, CAIRO_FORMAT_RGB16_565,
+						      buffer->width, buffer->height, buffer->stride*pixel_size);
     } else if (buffer->format == WINDOW_FORMAT_RGBA_8888 || buffer->format == WINDOW_FORMAT_RGBX_8888) {
         pixel_size = 4;
-        surface = cairo_image_surface_create_for_data(buffer->bits, CAIRO_FORMAT_RGB24, buffer->width, buffer->height, buffer->stride*pixel_size);
+        surface = cairo_image_surface_create_for_data((unsigned char*)buffer->bits, CAIRO_FORMAT_RGB24,
+						      buffer->width, buffer->height, buffer->stride*pixel_size);
     } else {
         LOGE("Unsupported buffer format: %d", buffer->format);
         return;
