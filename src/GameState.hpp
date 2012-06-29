@@ -46,6 +46,12 @@ namespace Cassis
 
       Color& edgeLoc(Vertex i, Vertex j);
     public:
+      ///amount of memory to serialize state
+      int serializesize() const;
+
+      void serialize(char* )const;
+      void deserialize(char* );
+
       ///returns the total number of vertices in the game. By default, return 6.
       Vertex nbVertex() const;
 

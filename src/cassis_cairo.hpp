@@ -30,6 +30,8 @@ private:
 
 public:
 
+  Cassis::Engine::GameState& getState(){return gs;}
+
   void setSizeX(int sx){sizeX=sx;}
   void setSizeY(int sy){sizeY=sy;}
 
@@ -37,9 +39,9 @@ public:
   {
     ia = new Cassis::IA::RandomIA();
     selected = -1;
-    gamecenterx = gamecentery = 200;
-    gameradius = 100;
-    vertexradius = 20;
+    gamecenterx = gamecentery = 250;
+    gameradius = 150;
+    vertexradius = 50;
 
 
       

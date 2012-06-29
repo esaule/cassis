@@ -28,15 +28,30 @@ static void handle_app_command(struct android_app* app, int32_t cmd);
 static int32_t handle_input(struct android_app* app, AInputEvent* event);
 
 
+
+static bool pressed;
+
+CassisDisplay* cd;
+
+
 void android_main(struct android_app* app) {
     // Make sure glue isn't stripped.
     app_dummy();
+
+    pressed = false;
+    cd = NULL;
 
     app->userData = NULL;
     app->onAppCmd = handle_app_command;
     app->onInputEvent = handle_input;
 
-    CassisDisplay cd;
+    CassisDisplay cd2;
+    cd = &cd2;
+
+    if (app->savedState != NULL) {
+      // We are starting with a previous saved state; restore from it.
+      cd->getState().deserialize((char*)app->savedState);
+    }
 
     while (1) {
         // Read all pending events. If app_has_focus is true, then we are going 
@@ -72,7 +87,7 @@ void android_main(struct android_app* app) {
                 continue;
             }
 
-            draw_frame(&buffer, &cd);
+            draw_frame(&buffer, cd);
 
             ANativeWindow_unlockAndPost(app->window);
         }
@@ -81,26 +96,58 @@ void android_main(struct android_app* app) {
 
 
 static void handle_app_command(struct android_app* app, int32_t cmd) {
-    /* app->userData is available here */
+  /* app->userData is available here */
+  
+  char * buf = NULL;
 
-    switch (cmd) {
-        case APP_CMD_INIT_WINDOW:
-            app_has_focus=true;
-            break;
-        case APP_CMD_LOST_FOCUS:
-            app_has_focus=false;
-            break;
-        case APP_CMD_GAINED_FOCUS:
-            app_has_focus=true;
-            break;
-    }
+  switch (cmd) {
+  case APP_CMD_SAVE_STATE:
+    app->savedStateSize = cd->getState().serializesize();
+    buf = (char*) malloc(app->savedStateSize);
+    cd->getState().serialize((char*)buf);
+    app->savedState = (void*)buf;
+    break;
+  case APP_CMD_INIT_WINDOW:
+    app_has_focus=true;
+    break;
+  case APP_CMD_LOST_FOCUS:
+    app_has_focus=false;
+    break;
+  case APP_CMD_GAINED_FOCUS:
+    app_has_focus=true;
+    break;
+  }
 }
+
 
 static int32_t handle_input(struct android_app* app, AInputEvent* event) {
     /* app->userData is available here */
 
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
         app_has_focus = true;
+
+	LOGI("Motion Event, pressed = %d", (pressed?1:0));
+	
+	for (int i=0; i< AMotionEvent_getPointerCount(event); ++i)
+	  {
+	    int action = AMotionEvent_getAction(event);
+	    LOGI("Motion Event, action = %d", action);
+	    if ((action & AMOTION_EVENT_ACTION_DOWN)
+		||(action & AMOTION_EVENT_ACTION_POINTER_DOWN))
+	      {
+		LOGI("In");
+		if (!pressed)
+		  {
+		    pressed = true;
+		    float px = AMotionEvent_getX(event, i);
+		    float py = AMotionEvent_getY(event, i);
+		    cd->clickat(px,py);
+		  }
+	      }
+	    else
+	      pressed = false;
+
+	  }
         return 1;
     } else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY) {
         LOGI("Key event: action=%d keyCode=%d metaState=0x%x",
@@ -115,6 +162,7 @@ static int32_t handle_input(struct android_app* app, AInputEvent* event) {
 
 
 static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd) {
+
     int pixel_size = 0;
     cairo_surface_t *surface = NULL;
 
