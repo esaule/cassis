@@ -46,11 +46,17 @@ namespace Cassis
 
       Color& edgeLoc(Vertex i, Vertex j);
     public:
-      ///amount of memory to serialize state
+      ///@brief returns the amount of memory to serialize state.
+      ///@return the amount of memory to serialize state (in bytes)
       int serializesize() const;
 
-      void serialize(char* )const;
-      void deserialize(char* );
+      ///@brief serialize state
+      ///@param p address where the state will be serialized. serializesize() bytes will be written. 
+      void serialize(char* p)const;
+
+      ///@brief restore the state from a previously serialized buffer
+      ///@param p address where the state is stored. serializesize() bytes will be read.
+      void deserialize(char* p);
 
       ///returns the total number of vertices in the game. By default, return 6.
       Vertex nbVertex() const;
