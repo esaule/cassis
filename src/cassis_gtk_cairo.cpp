@@ -1,3 +1,4 @@
+#define GTK
 #include <math.h>
 #include <gtk/gtk.h>
 #include <list>
@@ -21,58 +22,6 @@ GtkWidget *imWind;
 
 
 #include "cassis_cairo.hpp"
-
-
-  static gboolean
-  key_press (GtkWidget *widget, GdkEventKey *event, gpointer data)
-  {
-    CassisDisplay* g = (CassisDisplay*)data;
-
-    std::cout << event->hardware_keycode<<std::endl;
-
-    gtk_widget_queue_draw (imWind);
-
-    return TRUE;
-
-  }
-
-  static gboolean
-  button_press (GtkWidget *widget, GdkEventButton *event, gpointer data)
-  {
-    CassisDisplay* g = (CassisDisplay*)data;
-
-    g->clickat(event->x, event->y);
-    
-    gtk_widget_grab_focus(widget);
-    gtk_widget_queue_draw (imWind);
-
-    return TRUE;
-  }
-
-
-  static gboolean
-  expose (GtkWidget *widget, GdkEventExpose *event, gpointer data)
-  {
-    CassisDisplay* g = (CassisDisplay*)data;
-
-    cairo_t *cr;
-    /* get a cairo_t */  
-
-    cr = gdk_cairo_create (imWind->window);
-    
-    /* set a clip region for the expose event */
-    cairo_rectangle (cr,
- 		     event->area.x, event->area.y,
- 		     event->area.width, event->area.height);
-    cairo_clip (cr);
-    
-    g->setSizeX (imWind->allocation.width);
-    g->setSizeY (imWind->allocation.height);
-
-    g->render(cr);
-    cairo_destroy (cr);
-    return TRUE;
-  }
 
 
 
@@ -102,14 +51,14 @@ main (int argc, char *argv[])
   imWind = gtk_label_new("You should not see this message!");
 
   g_signal_connect (G_OBJECT (imWind), "expose_event",
-		    G_CALLBACK (expose), &g);
+		    G_CALLBACK (CairoGraphicController::expose), &g);
 
 
   g_signal_connect (G_OBJECT (window), "key-press-event",
-		    G_CALLBACK (key_press), &g);
+		    G_CALLBACK (CairoGraphicController::key_press), &g);
   
   g_signal_connect (G_OBJECT (window), "button-press-event",
-		    G_CALLBACK (button_press), &g);
+		    G_CALLBACK (CairoGraphicController::button_press), &g);
   
   
   

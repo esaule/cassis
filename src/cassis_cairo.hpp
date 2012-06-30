@@ -3,14 +3,11 @@
 
 #include "GameState.hpp"
 #include "IA.hpp"
+#include "cairo_graphic_controller.hpp"
 
-class CassisDisplay
+class CassisDisplay : public CairoGraphicController
 {
 private:
-
-  //window size
-  int sizeX, sizeY;
-
   //colors
   cairo_pattern_t * bgcolor;
   cairo_pattern_t * fgcolor;
@@ -28,123 +25,6 @@ private:
 
   Cassis::Engine::Vertex selected;
 
-public:
-
-  Cassis::Engine::GameState& getState(){return gs;}
-
-  void setSizeX(int sx){sizeX=sx;}
-  void setSizeY(int sy){sizeY=sy;}
-
-  CassisDisplay()
-  {
-    ia = new Cassis::IA::RandomIA();
-    selected = -1;
-    gamecenterx = gamecentery = 250;
-    gameradius = 150;
-    vertexradius = 50;
-
-
-      
-    bgcolor = cairo_pattern_create_rgb(1,1,1);
-    fgcolor = cairo_pattern_create_rgb(0,0,0);
-
-    colorp1 = cairo_pattern_create_rgb(1,0,0);
-    colorp2 = cairo_pattern_create_rgb(0,0,1);
-
-  }
-
-  ~CassisDisplay()
-  {
-    cairo_pattern_destroy(bgcolor);
-    cairo_pattern_destroy(fgcolor);
-
-    cairo_pattern_destroy(colorp1);   
-    cairo_pattern_destroy(colorp2);
-    delete ia;
-  }
-
-  //  void show()
-  //  {
-    //    gtk_widget_show (imWind);
-    //    gtk_widget_show (drawing);
-  //  }
-
-
-
-  void clickat(int x, int y)
-  {
-    int m = matchVertex(x, y);
-
-    if (gs.gameOver())
-      return;
-
-    if (m == -1)
-      return;
-    if (selected == -1)
-      {
-	selected = m; 
-	return;
-      }
-    try{
-      gs.play(selected, m, gs.whoseTurn());
-    }catch (Cassis::Engine::InvalidParameter)
-      {}
-
-    if ( ! gs.gameOver())
-      {
-	while (gs.whoseTurn() != Cassis::Engine::PLAYER1)
-	  {
-	    //std::cout<<"IA's turn"<<std::endl;
-	    try
-	      {
-		ia->play(gs);
-	      }
-	    catch (Cassis::Engine::InvalidParameter)
-	      {
-		//		std::cout<<"IA pooped itself"<<std::endl;
-	      }	
-	  }
-      }
-
-    selected = -1;
-  }
-
-  void scaled_stroke(cairo_t *cr)
-  {
-    double xwise = 1;
-    double ywise = 1;
-    cairo_save(cr);
-    cairo_device_to_user_distance (cr,&xwise,&ywise);
-    
-    cairo_scale(cr,xwise,ywise);
-    cairo_stroke(cr);
-    cairo_restore(cr);
-  }
-
-
-  // void scaled_show_text (cairo_t *cr, const std::string &s)
-  // {
-  //   double xwise = 1;
-  //   double ywise = 1;
-  //   cairo_save(cr);
-  //   cairo_device_to_user_distance (cr,&xwise,&ywise);
-   
-  //   cairo_scale(cr,xwise,ywise);
-  //   cairo_show_text (cr, s.c_str() );
-  //   cairo_restore(cr);
-  // }
-
-  void scaled_show_text (cairo_t *cr, char* s)
-  {
-    double xwise = 1;
-    double ywise = 1;
-    cairo_save(cr);
-    cairo_device_to_user_distance (cr, &xwise, &ywise);
-   
-    cairo_scale(cr,xwise,ywise);
-    cairo_show_text (cr, s );
-    cairo_restore(cr);
-  }
 
 
   void displayStatus(cairo_t* cr)
@@ -289,7 +169,76 @@ public:
   }
 
 
-  void render(cairo_t* cr)
+public:
+
+  Cassis::Engine::GameState& getState(){return gs;}
+
+  CassisDisplay()
+  {
+    ia = new Cassis::IA::RandomIA();
+    selected = -1;
+    gamecenterx = gamecentery = 250;
+    gameradius = 150;
+    vertexradius = 50;
+      
+    bgcolor = cairo_pattern_create_rgb(1,1,1);
+    fgcolor = cairo_pattern_create_rgb(0,0,0);
+
+    colorp1 = cairo_pattern_create_rgb(1,0,0);
+    colorp2 = cairo_pattern_create_rgb(0,0,1);
+  }
+
+  virtual ~CassisDisplay()
+  {
+    cairo_pattern_destroy(bgcolor);
+    cairo_pattern_destroy(fgcolor);
+
+    cairo_pattern_destroy(colorp1);   
+    cairo_pattern_destroy(colorp2);
+    delete ia;
+  }
+
+  void clickat(int x, int y)
+  {
+    int m = matchVertex(x, y);
+
+    if (gs.gameOver())
+      return;
+
+    if (m == -1)
+      return;
+    if (selected == -1)
+      {
+	selected = m; 
+	return;
+      }
+    try{
+      gs.play(selected, m, gs.whoseTurn());
+    }catch (Cassis::Engine::InvalidParameter)
+      {}
+
+    if ( ! gs.gameOver())
+      {
+	while (gs.whoseTurn() != Cassis::Engine::PLAYER1)
+	  {
+	    //std::cout<<"IA's turn"<<std::endl;
+	    try
+	      {
+		ia->play(gs);
+	      }
+	    catch (Cassis::Engine::InvalidParameter)
+	      {
+		//		std::cout<<"IA pooped itself"<<std::endl;
+	      }	
+	  }
+      }
+
+    selected = -1;
+  }
+
+
+
+  virtual void render(cairo_t* cr)
   { 
     //paint background
     cairo_set_source(cr, bgcolor);
