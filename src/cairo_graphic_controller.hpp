@@ -21,6 +21,7 @@ protected:
     cairo_restore(cr);
   }
 
+#ifndef NOSTRING
   ///maps to user distance before displaying text
   void scaled_show_text (cairo_t *cr, const std::string &s)
   {
@@ -33,6 +34,7 @@ protected:
     cairo_show_text (cr, s.c_str() );
     cairo_restore(cr);
   }
+#endif
 
   ///maps to user distance before displaying text
   void scaled_show_text (cairo_t *cr, char* s)
