@@ -34,6 +34,8 @@ GameState.o: GameState.hpp
 IA.o: IA.hpp GameState.hpp
 cassis_cli.o: GameState.hpp
 cassis_gtk_cairo.o: GameState.hpp IA.hpp cassis_cairo.hpp
-cassis_gtk_cairo.o: cairo_graphic_controller.hpp
+cassis_gtk_cairo.o: cairo_graphic_controller.hpp cairo_menu_selector.hpp
 IA.o: GameState.hpp
+cairo_menu_selector.o: cassis_cairo.hpp GameState.hpp IA.hpp
+cairo_menu_selector.o: cairo_graphic_controller.hpp
 cassis_cairo.o: GameState.hpp IA.hpp cairo_graphic_controller.hpp

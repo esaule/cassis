@@ -52,11 +52,11 @@ protected:
 
 public:
 
-  void setSizeX(int sx){sizeX=sx;}
-  void setSizeY(int sy){sizeY=sy;}
+  virtual void setSizeX(int sx){sizeX=sx;}
+  virtual void setSizeY(int sy){sizeY=sy;}
 
-  int getSizeX() const {return sizeX;}
-  int getSizeY() const {return sizeY;}
+  virtual int getSizeX() const {return sizeX;}
+  virtual int getSizeY() const {return sizeY;}
   
   virtual void clickat(int x, int y) = 0;
   

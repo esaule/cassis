@@ -40,14 +40,12 @@ private:
 	  {
 	    cairo_set_source(cr, colorp1);
 	    scaled_show_text(cr, "Player 1's turn");
-
 	  }
 	else
 	  {
 	    cairo_set_source(cr, colorp2);
 	    scaled_show_text(cr, "Player 1's turn");
-	  }
-	
+	  }	
       }
     else
       {
@@ -56,7 +54,6 @@ private:
 
 	if (gs.whoseTurn() == Cassis::Engine::PLAYER1)
 	  {
-
 	    scaled_show_text(cr, "Player 1 won!");
 	  }
 	else
@@ -102,25 +99,25 @@ private:
 	int y;
 	centerOfVertex (v, x, y);
 	cairo_arc (cr, x,y , vertexradius, 0., 2 * M_PI);	
-	    cairo_save(cr);
-	    if (v == selected)
+	cairo_save(cr);
+	if (v == selected)
+	  {
+	    switch (gs.whoseTurn())
 	      {
-		switch (gs.whoseTurn())
-		  {
-		  case Cassis::Engine::PLAYER1:
-		    cairo_set_source(cr, colorp1);
-		    break;
-		  case Cassis::Engine::PLAYER2:
-		    cairo_set_source(cr, colorp2);
-		    break;
-		  }
+	      case Cassis::Engine::PLAYER1:
+		cairo_set_source(cr, colorp1);
+		break;
+	      case Cassis::Engine::PLAYER2:
+		cairo_set_source(cr, colorp2);
+		break;
 	      }
-	    else
-	      {
-		cairo_set_source(cr, bgcolor);
-	      }
-	    cairo_fill_preserve(cr);
-	    cairo_restore(cr);
+	  }
+	else
+	  {
+	    cairo_set_source(cr, bgcolor);
+	  }
+	cairo_fill_preserve(cr);
+	cairo_restore(cr);
 
 	cairo_stroke (cr);
       }
@@ -173,9 +170,27 @@ public:
 
   Cassis::Engine::GameState& getState(){return gs;}
 
-  CassisDisplay()
+  CassisDisplay(int difficulty)
   {
-    ia = new Cassis::IA::RandomIA();
+    switch(difficulty)
+      {
+      case 0:
+	ia = new Cassis::IA::DumbIA();
+	break;
+      case 1:
+	ia = new Cassis::IA::SimpleIA();
+	break;
+      case 2:
+	ia = new Cassis::IA::RandomIA();
+	break;
+      case 3:
+	ia = new Cassis::IA::RandomIA();
+	break;
+      default:
+	ia = new Cassis::IA::RandomIA();
+	break;
+      }
+
     selected = -1;
     gamecenterx = gamecentery = 250;
     gameradius = 150;

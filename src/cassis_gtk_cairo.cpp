@@ -22,7 +22,7 @@ GtkWidget *imWind;
 
 
 #include "cassis_cairo.hpp"
-
+#include "cairo_menu_selector.hpp"
 
 
 
@@ -46,7 +46,8 @@ main (int argc, char *argv[])
 		      GTK_SIGNAL_FUNC (destroy), NULL);
   gtk_container_border_width (GTK_CONTAINER (window), 10);
 
-  CassisDisplay g;
+  //  CassisDisplay g;
+  CairoMenuSelector g;
 
   imWind = gtk_label_new("You should not see this message!");
 
@@ -68,7 +69,7 @@ main (int argc, char *argv[])
 
 
 
-   gtk_widget_show (imWind);
+  gtk_widget_show (imWind);
 
   gtk_container_add(GTK_CONTAINER(window), imWind);
   gtk_widget_show (window);
