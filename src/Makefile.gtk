@@ -21,9 +21,18 @@ cassis_gtk_cairo: $(OBJS)
 	$(LD) $(GTK_LIB) $(X11_LIB) $(OBJS) -o cassis_gtk_cairo $(LDFLAGS)
 
 clean:
-	rm *.o *~
+	-rm *.o *~
+	-rm cassis_gtk_cairo
 
 
 depend:
 	makedepend -f Makefile.gtk *.cpp *.hpp -Y
 
+# DO NOT DELETE
+
+GameState.o: GameState.hpp
+IA.o: IA.hpp GameState.hpp
+cassis_cli.o: GameState.hpp
+cassis_gtk_cairo.o: GameState.hpp IA.hpp cassis_cairo.hpp
+IA.o: GameState.hpp
+cassis_cairo.o: GameState.hpp IA.hpp
