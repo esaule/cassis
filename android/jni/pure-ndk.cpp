@@ -46,7 +46,7 @@ void android_main(struct android_app* app) {
     app->onAppCmd = handle_app_command;
     app->onInputEvent = handle_input;
 
-    CassisDisplay cd2;
+    CassisDisplay cd2(0);
     cd = &cd2;
 
     if (app->savedState != NULL) {
