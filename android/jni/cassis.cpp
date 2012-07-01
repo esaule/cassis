@@ -15,8 +15,9 @@
 #include "cairo/src/cairo.h"
 
 #include "cassis_cairo.hpp"
+#include "cairo_menu_selector.hpp"
 
-#define  LOG_TAG    "android-cairo-pure-ndk"
+#define  LOG_TAG    "cassis"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -24,7 +25,7 @@
 bool app_has_focus = false;
 int  tick          = 0;
 
-static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd);
+static void draw_frame(ANativeWindow_Buffer *buffer, CairoGraphicController* cd);
 static void handle_app_command(struct android_app* app, int32_t cmd);
 static int32_t handle_input(struct android_app* app, AInputEvent* event);
 
@@ -32,7 +33,7 @@ static int32_t handle_input(struct android_app* app, AInputEvent* event);
 
 static bool pressed;
 
-CassisDisplay* cd;
+CairoGraphicController* cd;
 
 
 void android_main(struct android_app* app) {
@@ -47,11 +48,12 @@ void android_main(struct android_app* app) {
     app->onInputEvent = handle_input;
 
     CassisDisplay cd2(0);
+    //    CairoMenuSelector cms;
     cd = &cd2;
 
     if (app->savedState != NULL) {
       // We are starting with a previous saved state; restore from it.
-      cd->getState().deserialize((char*)app->savedState);
+      //      cd->getState().deserialize((char*)app->savedState);
     }
 
     while (1) {
@@ -103,10 +105,10 @@ static void handle_app_command(struct android_app* app, int32_t cmd) {
 
   switch (cmd) {
   case APP_CMD_SAVE_STATE:
-    app->savedStateSize = cd->getState().serializesize();
-    buf = (char*) malloc(app->savedStateSize);
-    cd->getState().serialize((char*)buf);
-    app->savedState = (void*)buf;
+    // app->savedStateSize = cd->getState().serializesize();
+    // buf = (char*) malloc(app->savedStateSize);
+    // cd->getState().serialize((char*)buf);
+    // app->savedState = (void*)buf;
     break;
   case APP_CMD_INIT_WINDOW:
     app_has_focus=true;
@@ -162,7 +164,8 @@ static int32_t handle_input(struct android_app* app, AInputEvent* event) {
 
 
 
-static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd) {
+static void draw_frame(ANativeWindow_Buffer *buffer, CairoGraphicController* cd)
+{
 
     int pixel_size = 0;
     cairo_surface_t *surface = NULL;
@@ -195,46 +198,6 @@ static void draw_frame(ANativeWindow_Buffer *buffer, CassisDisplay* cd) {
 
     cd->render(cr);
 
-
-    // /* Draw the big X */
-    // double position = (tick%30)*(1.0/30);
-    // cairo_set_source_rgba (cr, 0.5, 0.5, 0.5, 0.7);
-    // cairo_move_to (cr, 0.1, position);
-    // cairo_line_to (cr, 0.9, 1.0-position);
-    // cairo_move_to (cr, 0.9, position);
-    // cairo_line_to (cr, 0.1, 1.0-position);
-    // cairo_set_line_width (cr, 0.1);
-    // cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
-    // cairo_stroke (cr);
-
-    // /* Draw three color squares */
-    // cairo_rectangle (cr, 0, 0,0.5, 0.5);
-    // cairo_set_source_rgba (cr, 1, 0, 0, 0.50);
-    // cairo_fill (cr);
-
-    // cairo_rectangle (cr, 0, 0.5, 0.5, 0.5);
-    // cairo_set_source_rgba (cr, 0, 1, 0, 0.50);
-    // cairo_fill (cr);
-
-    // cairo_rectangle (cr, 0.5, 0, 0.5, 0.5);
-    // cairo_set_source_rgba (cr, 0, 0, 1, 0.50);
-    // cairo_fill (cr);
-
-    // /* Draw a more complicated path */
-    // cairo_set_line_width (cr, 0.04);
-    // cairo_scale(cr, 0.5, 0.5);
-    // cairo_translate(cr, 0.5, 1.0);
-    // cairo_set_source_rgba (cr, 1.0, 0.2, 0.0, 0.5);
-    // cairo_move_to (cr, 0.25, 0.25);
-    // cairo_line_to (cr, 0.5, 0.375);
-    // cairo_rel_line_to (cr, 0.25, -0.125);
-    // cairo_arc (cr, 0.5, 0.5, 0.25 * sqrt(2), -0.25 * M_PI, 0.25 * M_PI);
-    // cairo_rel_curve_to (cr, -0.25, -0.125, -0.25, 0.125, -0.5, 0);
-    // cairo_close_path (cr);
-    // cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
-    // cairo_stroke (cr);
-
-    /* Clean up. */
     cairo_destroy(cr);
     cairo_surface_destroy(surface);
 }

@@ -8,7 +8,7 @@ install:
 
 
 local.properties build.xml:
-	android update project --name pure-ndk --path .
+	android update project --name cassis --path .
 
 clean:
 	ndk-build clean
