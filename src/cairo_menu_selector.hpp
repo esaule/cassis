@@ -19,6 +19,19 @@ class CairoMenuSelector: public CairoGraphicController
   float optionOffsetX;
   float optionOffsetY;
   char** tags;
+
+  bool checkcurrent()
+  {
+    if (! current) return false;
+    //assert (current);
+    if (current->quit())
+      {
+	delete current;
+	current = NULL;
+      }
+
+    return (current != NULL);
+  }
 public:
 
   CairoMenuSelector()
@@ -45,13 +58,13 @@ public:
   virtual void setSizeX(int sx)
   {
     CairoGraphicController::setSizeX(sx);
-    if (current) {current->setSizeX(sx);}
+    if (checkcurrent()) {current->setSizeX(sx);}
   }
 
   virtual void setSizeY(int sy)
   {
     CairoGraphicController::setSizeY(sy);
-    if (current) {current->setSizeY(sy);}
+    if (checkcurrent()) {current->setSizeY(sy);}
   }
 
   void clickon(int opt)
@@ -61,7 +74,7 @@ public:
 
   virtual void clickat(int x, int y)
   {
-    if (current) {current -> clickat (x,y); return;}
+    if (checkcurrent()) {current -> clickat (x,y); return;}
 
     for (int i=0; i<nboption; ++i)
       {
@@ -78,7 +91,7 @@ public:
 
   virtual void render(cairo_t* cr)
   {
-    if (current) {current -> render (cr); return;}
+    if (checkcurrent()) {current -> render (cr); return;}
 
 
     cairo_set_source(cr, bgcolor);
@@ -124,6 +137,8 @@ public:
     cairo_pattern_destroy(fgcolor);
     cairo_pattern_destroy(optionbgcolor);
   }
+
+  virtual bool quit() const {return false;}
 };
 
 #endif

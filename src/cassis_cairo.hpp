@@ -25,6 +25,7 @@ private:
 
   Cassis::Engine::Vertex selected;
 
+  bool quitting;
 
 
   void displayStatus(cairo_t* cr)
@@ -191,6 +192,8 @@ public:
 	break;
       }
 
+    quitting = false;
+
     selected = -1;
     gamecenterx = gamecentery = 250;
     gameradius = 150;
@@ -218,7 +221,10 @@ public:
     int m = matchVertex(x, y);
 
     if (gs.gameOver())
-      return;
+      {
+	quitting = true;
+	return;
+      }
 
     if (m == -1)
       return;
@@ -267,6 +273,7 @@ public:
     displayStatus(cr);
   }
 
+  virtual bool quit() const{return quitting;}
 };
 
 #endif

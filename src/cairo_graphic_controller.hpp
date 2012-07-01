@@ -65,6 +65,8 @@ public:
   virtual void render(cairo_t* cr) = 0;
   virtual ~CairoGraphicController(){};
 
+  virtual bool quit() const = 0;
+
   ///these functions are used to integrate in GTK
 #ifdef GTK
   static gboolean
