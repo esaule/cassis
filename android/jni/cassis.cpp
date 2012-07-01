@@ -47,9 +47,9 @@ void android_main(struct android_app* app) {
     app->onAppCmd = handle_app_command;
     app->onInputEvent = handle_input;
 
-    CassisDisplay cd2(0);
-    //    CairoMenuSelector cms;
-    cd = &cd2;
+    //CassisDisplay cd2(0);
+    CairoMenuSelector cms;
+    cd = &cms;
 
     if (app->savedState != NULL) {
       // We are starting with a previous saved state; restore from it.
