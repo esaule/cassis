@@ -64,6 +64,7 @@ public:
   ///cairo is scaled to (sizeX,sizeY) before render is called and area is cliped.
   virtual void render(cairo_t* cr) = 0;
   virtual ~CairoGraphicController(){};
+  CairoGraphicController(){sizeX=sizeY=0;}
 
   virtual bool quit() const = 0;
 

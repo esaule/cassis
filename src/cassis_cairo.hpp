@@ -166,10 +166,34 @@ private:
     cairo_restore(cr);
   }
 
+  ///computes the various size and offset based on the size of the windows.
+  ///should be called at least before each frame where the size changed.
+  void setSizes()
+  {
+    if(getSizeX() == 0 || getSizeY() == 0) return;
 
+    gamecenterx = getSizeX()/2;
+    gamecentery = getSizeY()/2;
+
+    int min_dim = (getSizeX()<getSizeY()?getSizeX():getSizeY());
+    gameradius = ((float)min_dim) * .39;
+    vertexradius = ((float)min_dim) * .09;
+  }
 public:
 
   Cassis::Engine::GameState& getState(){return gs;}
+
+  virtual void setSizeX(int sx)
+  {
+    CairoGraphicController::setSizeX(sx);
+    setSizes();
+  }
+
+  virtual void setSizeY(int sy)
+  {
+    CairoGraphicController::setSizeY(sy);
+    setSizes();
+  }
 
   CassisDisplay(int difficulty)
   {
