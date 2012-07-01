@@ -116,8 +116,8 @@ public:
   {
     if (current) delete current;
     current = NULL;
-
-    if (tags) delete tags;
+    
+    if (tags) delete[] tags;
     tags = NULL;
 
     cairo_pattern_destroy(bgcolor);
