@@ -7,6 +7,30 @@ protected:
   //window size
   int sizeX, sizeY;
 
+  ///blit a src to cr on the rectangle (x,y,x+width,y+height)
+  void blit (cairo_t* cr, cairo_surface_t* src,
+	     double x, double y, 
+	     double width, double height)
+  {
+      cairo_save(cr);
+
+      cairo_rectangle(cr,x,y,width,height);
+      cairo_clip(cr);
+
+      cairo_translate (cr,x,y);
+
+      cairo_rectangle (cr,0,0,width,height);
+
+      cairo_scale(cr,
+		  width/cairo_image_surface_get_width(src),
+		  height/cairo_image_surface_get_height(src));
+
+      cairo_set_source_surface(cr, src, 0, 0);
+      cairo_fill(cr);
+
+      cairo_restore(cr);
+  }
+
 
   ///maps back to user distance before stoking.
   void scaled_stroke(cairo_t *cr)

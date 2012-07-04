@@ -4,6 +4,7 @@
 #include "GameState.hpp"
 #include "IA.hpp"
 #include "cairo_graphic_controller.hpp"
+#include "SpriteCollection_cairo.hpp"
 
 class CassisDisplay : public CairoGraphicController
 {
@@ -27,6 +28,7 @@ private:
 
   bool quitting;
 
+  SpriteCollection sc;
 
   void displayStatus(cairo_t* cr)
   {
@@ -196,6 +198,7 @@ public:
   }
 
   CassisDisplay(int difficulty)
+    :sc("../assets/")
   {
     switch(difficulty)
       {
@@ -288,6 +291,12 @@ public:
     //paint background
     cairo_set_source(cr, bgcolor);
     cairo_paint(cr);
+
+    cairo_surface_t* bgsprite = sc.getSprite("wood3.png");
+    if (bgsprite != NULL)
+      {
+	blit(cr,bgsprite,0,0, getSizeX(), getSizeY());
+      }
 
     cairo_set_source(cr, fgcolor);
 
