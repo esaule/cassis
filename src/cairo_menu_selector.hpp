@@ -18,7 +18,7 @@ class CairoMenuSelector: public CairoGraphicController
   float optionwidth; //fraction of sizeX
   float optionOffsetX;
   float optionOffsetY;
-  char** tags;
+  char ** tags;
 
   bool checkcurrent()
   {

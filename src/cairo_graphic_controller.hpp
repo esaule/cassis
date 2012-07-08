@@ -61,7 +61,7 @@ protected:
 #endif
 
   ///maps to user distance before displaying text
-  void scaled_show_text (cairo_t *cr, char* s)
+  void scaled_show_text (cairo_t *cr, const char* s)
   {
     double xwise = 1;
     double ywise = 1;
