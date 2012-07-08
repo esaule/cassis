@@ -54,6 +54,24 @@ public:
     memcpy(str+actsize, ms.str, sizeof(char)*(ms.actsize+1));
   }
 
+  bool operator== (const MyString& ms) const
+  {
+    if (ms.actsize != this->actsize)
+      return false;
+
+    //assert ms.actsize == this->actsize
+    for (size_t i = 0; i< actsize; ++i)
+      if (str[i] != ms.str[i])
+	return false;
+
+    return true;
+  }
+
+  bool operator != (const MyString& ms) const
+  {
+    return ! this->operator==(ms);
+  }
+
   const MyString& operator+= (const MyString ms)
   {
     this->append(ms);
@@ -65,7 +83,6 @@ public:
     if (str != NULL)
       delete[] str;
   }
-
 
   operator const char *() const
   {
