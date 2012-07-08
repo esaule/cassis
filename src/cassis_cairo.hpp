@@ -293,6 +293,7 @@ public:
     cairo_paint(cr);
 
     cairo_surface_t* bgsprite = sc.getSprite("wood3.png");
+    //cairo_surface_t* bgsprite = NULL;
     if (bgsprite != NULL)
       {
 	blit(cr,bgsprite,0,0, getSizeX(), getSizeY());

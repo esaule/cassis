@@ -1,4 +1,3 @@
-#define NOSTRING
 #include <android_native_app_glue.h>
 
 #include <stdbool.h>
@@ -83,7 +82,7 @@ void android_main(struct android_app* app) {
         /* Now that we've delt with input, draw stuff */
         if (app->window != NULL) {
             ++tick;
-            LOGI("Rendering frame %d", tick);
+	    //            LOGI("Rendering frame %d", tick);
             ANativeWindow_Buffer buffer;
             if (ANativeWindow_lock(app->window, &buffer, NULL) < 0) {
                 LOGW("Unable to lock window buffer");

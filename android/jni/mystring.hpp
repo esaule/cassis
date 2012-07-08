@@ -8,7 +8,6 @@ class MyString
   size_t allocsize;
   size_t actsize; //as returned by strlen so in byte and without \0
 
-  MyString& operator= (const MyString&);//not implemented yet
 
 public:
   //pack alloc on copy
@@ -20,6 +19,15 @@ public:
     memcpy(str, ms.str, sizeof(char)*(actsize+1));
   }
 
+  MyString& operator= (const MyString& ms)
+  {
+    if (&ms == this) return *this;
+    reserve (ms.actsize+1);
+    actsize = ms.actsize;
+    memcpy(str, ms, sizeof(char)*(actsize+1));
+  }
+
+
   MyString()
     :str(new char[1]), allocsize(1), actsize(0)
   {
@@ -30,6 +38,7 @@ public:
   {
     actsize = strlen(s);
     allocsize = actsize+1;
+    str = new char[allocsize];
     memcpy(str, s, sizeof(char)*(actsize+1));
   }
 
