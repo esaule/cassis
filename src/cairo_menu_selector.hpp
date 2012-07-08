@@ -5,6 +5,8 @@
 
 class CairoMenuSelector: public CairoGraphicController
 {
+  typedef const char * tagtype;
+
   cairo_pattern_t * bgcolor;
   cairo_pattern_t * fgcolor;
   cairo_pattern_t * optionbgcolor;
@@ -18,7 +20,7 @@ class CairoMenuSelector: public CairoGraphicController
   float optionwidth; //fraction of sizeX
   float optionOffsetX;
   float optionOffsetY;
-  char ** tags;
+  tagtype* tags;
 
   bool checkcurrent()
   {
@@ -49,7 +51,7 @@ public:
     fgcolor = cairo_pattern_create_rgb(0,0,0);
     optionbgcolor = cairo_pattern_create_rgb(0,1,0);
 
-    tags = new char*[nboption];
+    tags = new tagtype[nboption];
     tags[0] = "Dumb";
     tags[1] = "Easy";
     tags[2] = "Medium";
