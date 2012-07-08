@@ -47,14 +47,15 @@ public:
     return actsize;
   }
 
-  void insert (const A& a)
+  //return index where object has been inserted
+  size_t insert (const A& a)
   {
-    if (actsize+1> size)
+    if (actsize+1> allocsize)
       reserve ((actsize+1)*2);
     
     //assert (actsize+1 > size)
     buffer[actsize] = a;
-    actsize ++;
+    return actsize ++;
   }
 
   ~myset()
@@ -62,7 +63,6 @@ public:
     if (buffer != NULL)
       delete[] buffer;
   }
-
 };
 
 
@@ -95,9 +95,33 @@ public:
   }
   
   
-  B& operator[] (const A&) const
+  //query
+  const B& operator[] (const A& a) const
   {
-    
+    size_t s = buf.size();
+    for (size_t i = 0; i<s; ++i)
+      {
+	if (buf[i].first == a)
+	  return buf[i].second;
+      }
+    assert (0);
+  }
+
+  //modification
+  B& operator[] (const A& a)
+  {
+    size_t s = buf.size();
+    for (size_t i = 0; i<s; ++i)
+      {
+	if (buf[i].first == a)
+	  return buf[i].second;
+      }
+
+    std::pair<A, B> p;
+    p.first = a;
+
+    auto ind = buf.insert( p );
+    return buf[ind].second;
   }
 };
 
