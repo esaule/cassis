@@ -1,0 +1,1 @@
+../../src/SpriteCollection_cairo.hpp

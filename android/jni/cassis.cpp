@@ -46,6 +46,10 @@ void android_main(struct android_app* app) {
     app->onAppCmd = handle_app_command;
     app->onInputEvent = handle_input;
 
+    //LOGI("asset: %p", app->activity->assetManager);
+    SpriteCollection::am = app->activity->assetManager;
+
+
     //CassisDisplay cd2(0);
     CairoMenuSelector cms;
     cd = &cms;

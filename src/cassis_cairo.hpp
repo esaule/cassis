@@ -23,6 +23,10 @@ private:
   int gamecentery;
   int gameradius;
   int vertexradius;
+  int edgewidth;
+  int edgewidth_highlight;
+  int vertex_highlight;
+
 
   Cassis::Engine::Vertex selected;
 
@@ -94,17 +98,23 @@ private:
 
   void printVertices(cairo_t* cr)
   {
-    cairo_set_source(cr, fgcolor);
+    cairo_save(cr);
 
     for (Cassis::Engine::Vertex v = 0; v < gs.nbVertex(); ++v)
       {
 	int x;
 	int y;
+	cairo_save(cr);
+
 	centerOfVertex (v, x, y);
 	cairo_arc (cr, x,y , vertexradius, 0., 2 * M_PI);	
-	cairo_save(cr);
+
+	cairo_set_line_width(cr, vertex_highlight);
+	
 	if (v == selected)
 	  {
+	    cairo_fill_preserve(cr);
+	
 	    switch (gs.whoseTurn())
 	      {
 	      case Cassis::Engine::PLAYER1:
@@ -114,16 +124,15 @@ private:
 		cairo_set_source(cr, colorp2);
 		break;
 	      }
+	    cairo_stroke (cr);
 	  }
 	else
-	  {
-	    cairo_set_source(cr, bgcolor);
-	  }
-	cairo_fill_preserve(cr);
-	cairo_restore(cr);
+	  cairo_fill(cr);
 
-	cairo_stroke (cr);
+	cairo_restore(cr);
       }
+
+    cairo_restore(cr);
   }
 
   void printEdges(cairo_t* cr)
@@ -141,14 +150,14 @@ private:
 	if (c == Cassis::Engine::PLAYER1) cairo_set_source(cr, colorp1);
 	if (c == Cassis::Engine::PLAYER2) cairo_set_source(cr, colorp2);
 	
-	cairo_set_line_width(cr, 3);
+	cairo_set_line_width(cr, edgewidth);
 
 	if (c != Cassis::Engine::UNCOLORED)
 	  {
 	    if ((u == x && v == y) ||
 		(u == x && v == z) ||
 		(u == y && v == z))
-	      cairo_set_line_width(cr, 7);
+	      cairo_set_line_width(cr, edgewidth_highlight);
 	  }
 	  
 	int x_u;
@@ -231,6 +240,10 @@ public:
 
     colorp1 = cairo_pattern_create_rgb(1,0,0);
     colorp2 = cairo_pattern_create_rgb(0,0,1);
+
+    edgewidth=7;
+    edgewidth_highlight=12;
+    vertex_highlight=7;
   }
 
   virtual ~CassisDisplay()
