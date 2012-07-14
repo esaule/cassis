@@ -32,7 +32,6 @@ private:
 
   bool quitting;
 
-  SpriteCollection sc;
 
   void displayStatus(cairo_t* cr)
   {
@@ -207,7 +206,6 @@ public:
   }
 
   CassisDisplay(int difficulty)
-    :sc("../assets/")
   {
     switch(difficulty)
       {
@@ -305,7 +303,7 @@ public:
     cairo_set_source(cr, bgcolor);
     cairo_paint(cr);
 
-    cairo_surface_t* bgsprite = sc.getSprite("wood3.png");
+    cairo_surface_t* bgsprite = SpriteCollection::sc.getSprite("wood3.png");
     //cairo_surface_t* bgsprite = NULL;
     if (bgsprite != NULL)
       {

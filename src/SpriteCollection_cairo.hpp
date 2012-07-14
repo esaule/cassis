@@ -195,7 +195,9 @@ public:
 	  }
       }
   }
-  
+
+
+  static SpriteCollection sc;
 };
 
 

@@ -26,3 +26,7 @@ cairo_status_t android_png_cairo_wrapper_read (void *closure,
   return CAIRO_STATUS_SUCCESS;
 }
 #endif
+
+SpriteCollection SpriteCollection::sc("../assets/");
+
+
