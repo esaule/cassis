@@ -47,28 +47,47 @@ protected:
 
 #ifndef NOSTRING
   ///maps to user distance before displaying text
-  void scaled_show_text (cairo_t *cr, const std::string &s)
+  void scaled_show_text (cairo_t *cr, const std::string &s, float size=-1.)
   {
-    double xwise = 1;
-    double ywise = 1;
-    cairo_save(cr);
-    cairo_device_to_user_distance (cr,&xwise,&ywise);
-   
-    cairo_scale(cr,xwise,ywise);
-    cairo_show_text (cr, s.c_str() );
-    cairo_restore(cr);
+    scaled_show_text (cr, s.c_str(), size);
   }
 #endif
 
   ///maps to user distance before displaying text
-  void scaled_show_text (cairo_t *cr, const char* s)
+  void scaled_show_text (cairo_t *cr, const char* s, float size=-1.)
   {
     double xwise = 1;
     double ywise = 1;
     cairo_save(cr);
+
+    if (size > 0)
+      cairo_set_font_size(cr, size);
+
     cairo_device_to_user_distance (cr, &xwise, &ywise);
    
     cairo_scale(cr,xwise,ywise);
+    cairo_show_text (cr, s );
+    cairo_restore(cr);
+  }
+
+
+#ifndef NOSTRING
+  void show_text (cairo_t *cr, std::string& s, float size=-1.)
+  {
+    show_text(cr, s.c_str(), size);
+  }
+#endif
+
+
+  void show_text (cairo_t *cr, const char* s, float size=-1.)
+  {
+    double xwise = 1;
+    double ywise = 1;
+    cairo_save(cr);
+
+    if (size > 0)
+      cairo_set_font_size(cr, size);
+
     cairo_show_text (cr, s );
     cairo_restore(cr);
   }

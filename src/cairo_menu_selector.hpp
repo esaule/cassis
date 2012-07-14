@@ -2,6 +2,7 @@
 #define CAIRO_SELECTOR_H_
 
 #include "cassis_cairo.hpp"
+#include "cairo_text_display.hpp"
 
 class CairoMenuSelector: public CairoGraphicController
 {
@@ -11,6 +12,7 @@ class CairoMenuSelector: public CairoGraphicController
   cairo_pattern_t * fgcolor;
   cairo_pattern_t * optionbgcolor;
 
+  const char* helptext;
 
   CairoGraphicController* current;
 
@@ -20,6 +22,10 @@ class CairoMenuSelector: public CairoGraphicController
   float optionwidth; //fraction of sizeX
   float optionOffsetX;
   float optionOffsetY;
+  float optionFontSize;
+  float optionFontSizeRel;
+  float titleFontSizeRel;
+  float titleFontSize;
   tagtype* tags;
 
   bool checkcurrent()
@@ -35,17 +41,22 @@ class CairoMenuSelector: public CairoGraphicController
     return (current != NULL);
   }
 public:
-
   CairoMenuSelector()
     :current(NULL)
   {
-    nboption = 3;
+    nboption = 4;
     interoption_height = .05;
     optionheight = .1;
-    optionwidth = .4;
+    optionwidth = .7;
 
-    optionOffsetY = .1;
+    optionOffsetY = .30;
     optionOffsetX = .1;
+    optionFontSizeRel = .05;
+    
+    optionFontSize = optionFontSizeRel*getSizeY();
+
+    titleFontSizeRel = .20;
+    titleFontSize = titleFontSizeRel*getSizeY();
 
     bgcolor = cairo_pattern_create_rgb(1,1,1);
     fgcolor = cairo_pattern_create_rgb(0,0,0);
@@ -55,6 +66,9 @@ public:
     tags[0] = "Dumb";
     tags[1] = "Easy";
     tags[2] = "Medium";
+    tags[3] = "Help";
+
+    helptext = "Each player at her turn adds an edge between two points. The first player to make a triangle LOSES. Do not connect 3 points together with 3 edges and you will win!";
   }
 
   virtual void setSizeX(int sx)
@@ -67,11 +81,18 @@ public:
   {
     CairoGraphicController::setSizeY(sy);
     if (checkcurrent()) {current->setSizeY(sy);}
+    optionFontSize = optionFontSizeRel*getSizeY();
+    titleFontSize = titleFontSizeRel*getSizeY();
   }
 
   void clickon(int opt)
   {
-    current = new CassisDisplay(opt);
+    if (opt < 3)
+      current = new CassisDisplay(opt);
+
+    if (opt == 3)
+      current = new CairoTextDisplay(helptext);
+
   }
 
   virtual void clickat(int x, int y)
@@ -99,8 +120,23 @@ public:
     cairo_set_source(cr, bgcolor);
     cairo_paint(cr);
 
+
+    cairo_surface_t* bgsprite = SpriteCollection::sc.getSprite("wood3.png");
+    //cairo_surface_t* bgsprite = NULL;
+    if (bgsprite != NULL)
+      {
+	blit(cr,bgsprite,0,0, getSizeX(), getSizeY());
+      }
+
     cairo_set_source(cr, fgcolor);
 
+    {
+      cairo_move_to(cr,
+		    getSizeX()*(optionOffsetX),
+		    getSizeY()*(optionOffsetY+titleFontSizeRel)/2.);
+      show_text(cr, "Cassis", titleFontSize);
+    }
+    
     cairo_save(cr);
 
     for (int i=0; i<nboption; ++i)
@@ -120,8 +156,9 @@ public:
 	//print tag
 	cairo_move_to(cr,
 		      getSizeX()*(optionOffsetX+optionwidth/4.),
-		      getSizeY()*(optionOffsetY+i*(optionheight+interoption_height)+optionheight/2.));
-	scaled_show_text(cr, tags[i]);
+		      getSizeY()*(optionOffsetY+i*(optionheight+interoption_height)
+				  +(optionheight+optionFontSizeRel)/2.));
+	show_text(cr, tags[i], optionFontSize);
       }
 
     cairo_restore(cr);

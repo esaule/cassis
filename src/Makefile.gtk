@@ -32,10 +32,15 @@ depend:
 
 GameState.o: GameState.hpp
 IA.o: IA.hpp GameState.hpp
+SpriteCollection_cairo.o: SpriteCollection_cairo.hpp
 cassis_cli.o: GameState.hpp
 cassis_gtk_cairo.o: GameState.hpp IA.hpp cassis_cairo.hpp
-cassis_gtk_cairo.o: cairo_graphic_controller.hpp cairo_menu_selector.hpp
+cassis_gtk_cairo.o: cairo_graphic_controller.hpp SpriteCollection_cairo.hpp
+cassis_gtk_cairo.o: cairo_menu_selector.hpp cairo_text_display.hpp
 IA.o: GameState.hpp
 cairo_menu_selector.o: cassis_cairo.hpp GameState.hpp IA.hpp
 cairo_menu_selector.o: cairo_graphic_controller.hpp
+cairo_menu_selector.o: SpriteCollection_cairo.hpp cairo_text_display.hpp
+cairo_text_display.o: cairo_graphic_controller.hpp
 cassis_cairo.o: GameState.hpp IA.hpp cairo_graphic_controller.hpp
+cassis_cairo.o: SpriteCollection_cairo.hpp
