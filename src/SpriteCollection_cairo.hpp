@@ -20,12 +20,6 @@
 #include <android/asset_manager.h>
 #include <android/log.h>
 
-#define  LOG_TAG    "cassis"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-
-
 cairo_status_t android_png_cairo_wrapper_read (void *closure,
 					       unsigned char *data,
 					       unsigned int length);
@@ -38,6 +32,8 @@ class SpriteCollection
 {
 #ifdef NOSTRING
   typedef MyString string;
+#else
+  typedef std::string string;
 #endif
 
 
@@ -62,11 +58,11 @@ class SpriteCollection
     // AAssetDir_close(ad);
     // LOGI("done");
 
-    LOGI("android_cairo_image_surface_create_from_png(\"%s\")", path);
+    //    LOGI("android_cairo_image_surface_create_from_png(\"%s\")", path);
 
     if (am == NULL)
       {
-	LOGI("am == NULL");
+	//LOGI("am == NULL");
 	return NULL;
       }
 
@@ -74,7 +70,7 @@ class SpriteCollection
 
     if (as == NULL)
       {
-	LOGI("as == NULL");
+	//	LOGI("as == NULL");
 	return NULL;
       }
 
@@ -84,14 +80,14 @@ class SpriteCollection
     
     if (sur == NULL)
       {
-	LOGI("sur == NULL");
+	//LOGI("sur == NULL");
 	return NULL;
       }
 
     if (cairo_surface_status(sur) == CAIRO_STATUS_NO_MEMORY ||
 	cairo_surface_status(sur) == CAIRO_STATUS_READ_ERROR)
       {
-	LOGI("cairo_surface_status() error");
+	//LOGI("cairo_surface_status() error");
 	cairo_surface_destroy(sur);
 	return NULL;
       }
@@ -102,7 +98,7 @@ class SpriteCollection
 
   bool load(const string& name)
   {
-    LOGI("load(\"%s\")", name.c_str());
+    //LOGI("load(\"%s\")", name.c_str());
 
     const bool debug = false;
     //    if (debug)
