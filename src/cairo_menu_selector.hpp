@@ -21,6 +21,8 @@
 #include "cassis_cairo.hpp"
 #include "cairo_text_display.hpp"
 
+#define COPYRIGHTTEXT "(c) Erik Saule, 2012. " VERSION_NUMBER ". Released under the GPLv3 license."
+
 class CairoMenuSelector: public CairoGraphicController
 {
   typedef const char * tagtype;
@@ -30,6 +32,8 @@ class CairoMenuSelector: public CairoGraphicController
   cairo_pattern_t * optionbgcolor;
 
   const char* helptext;
+
+  const char* copyrighttext;
 
   CairoGraphicController* current;
 
@@ -44,6 +48,11 @@ class CairoMenuSelector: public CairoGraphicController
   float titleFontSizeRel;
   float titleFontSize;
   tagtype* tags;
+
+  float copyrightOffsetX;
+  float copyrightOffsetY;
+  float copyrightFontSizeRel;
+  float copyrightFontSize;
 
   bool checkcurrent()
   {
@@ -75,6 +84,12 @@ public:
     titleFontSizeRel = .20;
     titleFontSize = titleFontSizeRel*getSizeY();
 
+    copyrightOffsetX = .10;
+    copyrightOffsetY = .9;
+    copyrightFontSizeRel = .02;
+    copyrightFontSize = copyrightFontSizeRel*getSizeY();
+
+
     bgcolor = cairo_pattern_create_rgb(1,1,1);
     fgcolor = cairo_pattern_create_rgb(0,0,0);
     optionbgcolor = cairo_pattern_create_rgb(0,1,0);
@@ -86,6 +101,7 @@ public:
     tags[3] = "Help";
 
     helptext = "Each player at her turn adds an edge between two points. The first player to make a triangle LOSES. Do not connect 3 points together with 3 edges and you will win!";
+    copyrighttext = COPYRIGHTTEXT;
   }
 
   virtual void setSizeX(int sx)
@@ -100,6 +116,7 @@ public:
     if (checkcurrent()) {current->setSizeY(sy);}
     optionFontSize = optionFontSizeRel*getSizeY();
     titleFontSize = titleFontSizeRel*getSizeY();
+    copyrightFontSize = copyrightFontSizeRel*getSizeY();
   }
 
   void clickon(int opt)
@@ -179,6 +196,9 @@ public:
       }
 
     cairo_restore(cr);
+
+    cairo_move_to (cr, getSizeX()*copyrightOffsetX, getSizeY()*copyrightOffsetY);
+    show_text(cr, copyrighttext, copyrightFontSize);
   }
 
   virtual ~CairoMenuSelector()
