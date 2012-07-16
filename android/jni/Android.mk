@@ -24,7 +24,7 @@ CAIRO_COMPILE=-I$(CAIRO_ANDROID)/jni/pixman/pixman -I$(CAIRO_ANDROID)/jni/cairo/
 
 CAIRO_LINK=-L$(CAIRO_ANDROID)/libs/$(TARGET_ARCH_ABI) -lpixman -lcairo
 
-VERSION_NUMBER=\"`git describe --tags`-`git log --pretty=format:'%h' -n 1``if git diff --exit-code > /dev/null ; then echo -n ; else echo \-dirty; fi`\"
+VERSION_NUMBER=\"`git describe --tags``if git diff --exit-code > /dev/null ; then echo -n ; else echo \-dirty; fi`\"
 
 LOCAL_MODULE    := cassis
 LOCAL_CFLAGS    := -O2 -I. $(CAIRO_COMPILE) -DANDROID=1  -DVERSION_NUMBER=$(VERSION_NUMBER)

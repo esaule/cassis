@@ -3,7 +3,7 @@ include Makefile.local
 GTK_INCLUDE = `pkg-config --cflags gtk+-2.0` `pkg-config --cflags cairo`
 GTK_LIB = `pkg-config --libs gtk+-2.0``pkg-config --libs cairo`
 
-VERSION_NUMBER=\"`git describe --tags`-`git log --pretty=format:'%h' -n 1``if git diff --exit-code > /dev/null ; then echo -n ; else echo \-dirty; fi`\"
+VERSION_NUMBER=\"`git describe --tags``if git diff --exit-code > /dev/null ; then echo -n ; else echo \-dirty; fi`\"
 
 CC = gcc -g -Wall
 CFLAGS += $(GTK_INCLUDE)
