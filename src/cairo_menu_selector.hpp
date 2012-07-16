@@ -84,9 +84,9 @@ public:
     titleFontSizeRel = .20;
     titleFontSize = titleFontSizeRel*getSizeY();
 
-    copyrightOffsetX = .10;
+    copyrightOffsetX = .05;
     copyrightOffsetY = .9;
-    copyrightFontSizeRel = .02;
+    copyrightFontSizeRel = .015;
     copyrightFontSize = copyrightFontSizeRel*getSizeY();
 
 
@@ -100,7 +100,7 @@ public:
     tags[2] = "Medium";
     tags[3] = "Help";
 
-    helptext = "Each player at her turn adds an edge between two points. The first player to make a triangle LOSES. Do not connect 3 points together with 3 edges and you will win!";
+    helptext = "Each player at her turn adds an edge between two points. The first player making a triangle LOSES. Do not connect 3 points together with 3 edges and you will win!";
     copyrighttext = COPYRIGHTTEXT;
   }
 
