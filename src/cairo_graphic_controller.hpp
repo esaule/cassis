@@ -18,7 +18,7 @@
 #ifndef CAIRO_GRAPHIC_CONTROLLER_H
 #define CAIRO_GRAPHIC_CONTROLLER_H
 
-class CairoGraphicController
+class CairoGraphicController : public Serializable
 {
 protected:
   //window size
@@ -181,7 +181,6 @@ public:
     return TRUE;
   }
 #endif
-
 };
 
 #endif

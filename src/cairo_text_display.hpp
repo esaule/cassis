@@ -164,6 +164,20 @@ public:
 
   }
   
+  //there is nothing to serialize.
+  virtual void deserialize(const char* c)
+  {
+  }
+
+  virtual void serialize(char* c) const
+  {
+  }
+
+  virtual size_t serializesize() const
+  {
+    return 0;
+  }
+
   virtual ~CairoTextDisplay()
   {
     delete[] text;

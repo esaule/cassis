@@ -18,6 +18,8 @@
 #ifndef CASSIS_GAMESTATE
 #define CASSIS_GAMESTATE
 
+#include "serializable.hpp"
+
 namespace Cassis
 {
   namespace Engine
@@ -40,7 +42,7 @@ namespace Cassis
     typedef int Vertex;
     typedef int Edge;
 
-    class GameState
+    class GameState : public Serializable
     {
       Color* board;
       int turn;
@@ -65,15 +67,15 @@ namespace Cassis
     public:
       ///@brief returns the amount of memory to serialize state.
       ///@return the amount of memory to serialize state (in bytes)
-      int serializesize() const;
+      virtual size_t serializesize() const;
 
       ///@brief serialize state
       ///@param p address where the state will be serialized. serializesize() bytes will be written. 
-      void serialize(char* p)const;
+      virtual void serialize(char* p)const;
 
       ///@brief restore the state from a previously serialized buffer
       ///@param p address where the state is stored. serializesize() bytes will be read.
-      void deserialize(char* p);
+      virtual void deserialize(const char* p);
 
       ///returns the total number of vertices in the game. By default, return 6.
       Vertex nbVertex() const;

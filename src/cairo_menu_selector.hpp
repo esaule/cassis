@@ -20,12 +20,20 @@
 
 #include "cassis_cairo.hpp"
 #include "cairo_text_display.hpp"
+#include "exception.hpp"
 
 #define COPYRIGHTTEXT "(c) Erik Saule, 2012. " VERSION_NUMBER ". Released under the GPLv3 license."
 
 class CairoMenuSelector: public CairoGraphicController
 {
   typedef const char * tagtype;
+
+  typedef enum
+    {
+      NONE,
+      GAME,
+      HELP
+    } savetypes;
 
   cairo_pattern_t * bgcolor;
   cairo_pattern_t * fgcolor;
@@ -54,6 +62,8 @@ class CairoMenuSelector: public CairoGraphicController
   float copyrightFontSizeRel;
   float copyrightFontSize;
 
+  savetypes currentobj;
+  
   bool checkcurrent()
   {
     if (! current) return false;
@@ -62,6 +72,7 @@ class CairoMenuSelector: public CairoGraphicController
       {
 	delete current;
 	current = NULL;
+	currentobj = NONE;
       }
 
     return (current != NULL);
@@ -74,6 +85,8 @@ public:
     interoption_height = .05;
     optionheight = .1;
     optionwidth = .7;
+
+    currentobj = NONE;
 
     optionOffsetY = .30;
     optionOffsetX = .1;
@@ -122,10 +135,16 @@ public:
   void clickon(int opt)
   {
     if (opt < 3)
-      current = new CassisDisplay(opt);
+      {
+	currentobj = GAME;
+	current = new CassisDisplay(opt);
+      }
 
     if (opt == 3)
-      current = new CairoTextDisplay(helptext);
+      {
+	currentobj = HELP;
+	current = new CairoTextDisplay(helptext);
+      }
 
   }
 
@@ -215,6 +234,47 @@ public:
   }
 
   virtual bool quit() const {return false;}
+
+  virtual void deserialize(const char* c)
+  {
+    currentobj = *((savetypes*) c);
+    c += sizeof(currentobj);
+
+    switch (currentobj)
+      {
+      case NONE:
+	break;
+      case HELP:
+	current = new CairoTextDisplay(helptext);
+	current->deserialize(c);
+	break;
+      case GAME:
+	current = new CassisDisplay(0);
+	current->deserialize(c);
+	break;
+      default:
+	throw DeserializeException();
+      }
+  }
+
+  virtual void serialize(char* c) const
+  {
+    *((savetypes*) c) = currentobj;
+    c += sizeof(currentobj);
+    
+    if (current != NULL)
+      current->serialize(c);
+  }
+  
+  virtual size_t serializesize() const
+  {
+    size_t size = sizeof(currentobj);
+    if (current != NULL)
+      size += current->serializesize();
+
+    return size;
+  }
+
 };
 
 #endif

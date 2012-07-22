@@ -184,7 +184,7 @@ namespace Cassis{
 	}
     }
 
-    void GameState::deserialize(char* buffer)
+    void GameState::deserialize(const char* buffer)
     {
       int* t = (int*) buffer;
       turn = *t ;

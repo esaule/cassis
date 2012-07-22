@@ -73,7 +73,15 @@ void android_main(struct android_app* app) {
 
     if (app->savedState != NULL) {
       // We are starting with a previous saved state; restore from it.
-      //      cd->getState().deserialize((char*)app->savedState);
+      try
+	{
+	  cms.deserialize((char*)app->savedState);
+	}
+      catch (DeserializeException de)
+	{
+	  LOGE("Can not deserialize state! Quitting");
+	  return;
+	}
     }
 
     while (1) {
@@ -125,10 +133,15 @@ static void handle_app_command(struct android_app* app, int32_t cmd) {
 
   switch (cmd) {
   case APP_CMD_SAVE_STATE:
-    // app->savedStateSize = cd->getState().serializesize();
-    // buf = (char*) malloc(app->savedStateSize);
-    // cd->getState().serialize((char*)buf);
-    // app->savedState = (void*)buf;
+    //To save the state: write the size of the save in
+    //app->savedStateSize and point to a buffer of that size with
+    //app->savedState. Saving the state is important because all
+    //change of application cause a save. Changing orientation causes
+    //a save as well.
+    app->savedStateSize = cd->serializesize();
+    buf = (char*) malloc(app->savedStateSize);
+    cd->serialize((char*)buf);
+    app->savedState = (void*)buf;
     break;
   case APP_CMD_INIT_WINDOW:
     app_has_focus=true;

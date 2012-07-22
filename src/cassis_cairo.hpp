@@ -44,6 +44,7 @@ private:
   int edgewidth_highlight;
   int vertex_highlight;
 
+  int difficulty;
 
   Cassis::Engine::Vertex selected;
 
@@ -206,24 +207,15 @@ private:
     gameradius = ((float)min_dim) * .39;
     vertexradius = ((float)min_dim) * .09;
   }
-public:
-
-  Cassis::Engine::GameState& getState(){return gs;}
-
-  virtual void setSizeX(int sx)
+  
+  void setDifficulty(int difficulty)
   {
-    CairoGraphicController::setSizeX(sx);
-    setSizes();
-  }
+    this->difficulty = difficulty;
+    if (ia != NULL)
+      {
+	delete ia;
+      }
 
-  virtual void setSizeY(int sy)
-  {
-    CairoGraphicController::setSizeY(sy);
-    setSizes();
-  }
-
-  CassisDisplay(int difficulty)
-  {
     switch(difficulty)
       {
       case 0:
@@ -242,6 +234,28 @@ public:
 	ia = new Cassis::IA::RandomIA();
 	break;
       }
+  }
+
+public:
+
+  Cassis::Engine::GameState& getState(){return gs;}
+
+  virtual void setSizeX(int sx)
+  {
+    CairoGraphicController::setSizeX(sx);
+    setSizes();
+  }
+
+  virtual void setSizeY(int sy)
+  {
+    CairoGraphicController::setSizeY(sy);
+    setSizes();
+  }
+
+  CassisDisplay(int difficulty)
+    :ia(NULL)
+  {
+    setDifficulty(difficulty);
 
     quitting = false;
 
@@ -335,7 +349,30 @@ public:
     displayStatus(cr);
   }
 
+
   virtual bool quit() const{return quitting;}
+
+  virtual void deserialize(const char* c) 
+  {
+    int diff = *((int*)c);
+    c += sizeof(diff);
+    setDifficulty(diff);
+
+    gs.deserialize(c);
+  }
+
+  virtual void serialize(char* c) const
+  {
+    *((int*)c) = difficulty;
+    c += sizeof(difficulty);
+
+    gs.serialize(c);
+  }
+  
+  virtual size_t serializesize() const
+  {
+    return sizeof(difficulty) + gs.serializesize();
+  }
 };
 
 #endif
