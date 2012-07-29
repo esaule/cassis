@@ -1,8 +1,12 @@
-CXXFLAGS=--std=c++0x -g
+CXXFLAGS=--std=c++0x -g -O2
 LD=g++
 CC=g++
 
+
 cassis_cli: GameState.o cassis_cli.o
+
+bruteforce: GameState.o bruteforce.o
+
 
 clean:
 	-rm *.o

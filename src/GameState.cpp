@@ -21,13 +21,23 @@
 #define NULL 0
 #endif
 
+#include <sstream>
+
 namespace Cassis{
   namespace Engine{
 
     void GameState::validateVertex(Vertex i) const throw(InvalidParameter)
     {
-      if (i < 0) throw InvalidParameter();
-      if (i >= nbVertex()) throw InvalidParameter();
+      if (i < 0) {
+	std::stringstream ss;
+	ss<<"invalid vertex: "<<i;
+	throw InvalidParameter(ss.str());
+      }
+      if (i >= nbVertex()) {
+	std::stringstream ss;
+	ss<<"invalid vertex: "<<i;
+	throw InvalidParameter(ss.str());
+      }
     }
 
     Vertex GameState::nbVertex() const
@@ -55,6 +65,16 @@ namespace Cassis{
 	  board[e] = UNCOLORED;
 	}
     }
+
+    GameState::GameState(const GameState& gs)
+      :board(new Color[nbEdge()]), turn(gs.turn)
+    {
+      for (Edge e = 0; e< nbEdge(); ++e)
+	{
+	  board[e] = gs.board[e];
+	}
+    }
+
     
     GameState::~GameState()
     {
@@ -95,7 +115,11 @@ namespace Cassis{
     Color GameState::edge(Vertex i, Vertex j) const throw (InvalidParameter)
     {
       if (i == j)
-	throw InvalidParameter();
+	{
+	  std::stringstream ss;
+	  ss<<"invalid edge: "<<i<<" "<<j;
+	  throw InvalidParameter(ss.str());
+	}
       validateVertex(i);
       validateVertex(j);
       if (j < i)
@@ -150,7 +174,11 @@ namespace Cassis{
     void GameState::play (Vertex i, Vertex j, Color c) throw (InvalidParameter)
     {
       if (i == j)
-	throw InvalidParameter();
+	{
+	  std::stringstream ss;
+	  ss<<"can t play. invalid edge "<<i<<" "<<j;
+	  throw InvalidParameter(ss.str());
+	}
       validateVertex(i);
       validateVertex(j);
       if (j < i)
@@ -160,8 +188,17 @@ namespace Cassis{
 	}
       
       //assert (i<j);
-      if (edgeLoc(i,j) != UNCOLORED) throw InvalidParameter();
-      if (whoseTurn() != c) throw InvalidParameter();
+      if (edgeLoc(i,j) != UNCOLORED)
+	{
+	  std::stringstream ss;
+	  ss<<"can not play. UNCOLORED";
+	  throw InvalidParameter(ss.str());
+	}
+      if (whoseTurn() != c){
+	std::stringstream ss;
+	ss<<"can not play. it is not "<<c<<" turn";
+	throw InvalidParameter(ss.str());
+      }
       
       edgeLoc(i,j) = c;
       turn++;
@@ -195,6 +232,18 @@ namespace Cassis{
 	  c++;
 	}
     }
-    
+
+    ///returns the state of the game encoded in base 3.
+    GameState::HashType GameState::hash() const
+    {
+      HashType h;
+      for (int i=0; i<nbEdge(); ++i)
+	{
+	  h *= 3;
+	  h += board[i];
+	}
+      return h;
+    }
+
   }
 }

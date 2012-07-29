@@ -19,17 +19,23 @@
 #define CASSIS_GAMESTATE
 
 #include "serializable.hpp"
+#include "exception.hpp"
+#include <string>
 
 namespace Cassis
 {
   namespace Engine
   {
-    class Exception
+    class InvalidParameter : public BaseException
     {
-    };
+      std::string s;
 
-    class InvalidParameter : public Exception
-    {
+    public:
+      InvalidParameter();
+      InvalidParameter(std::string msg)
+	:s(msg)
+      {}
+      const std::string& getMsg() const{return s;}
     };
 
     enum Color
@@ -44,6 +50,11 @@ namespace Cassis
 
     class GameState : public Serializable
     {
+    public:
+      typedef int HashType;
+
+    protected:
+
       Color* board;
       int turn;
 
@@ -114,8 +125,17 @@ namespace Cassis
       ///@param c either PLAYER1 or PLAYER2
       void play(Vertex i, Vertex j, Color c) throw (InvalidParameter);
 
+
+      ///
+      HashType hash() const;
+
+
       GameState();
+      GameState(const GameState&);
       ~GameState();
+    private:
+      GameState& operator= (const GameState&); //undefined
+
     };
   }
 }
