@@ -29,13 +29,21 @@ namespace Cassis{
     template <typename T>
     struct Comp
     {
-      T* deg;
-      Comp(T* d)
-	:deg(d)
+      T* deg1;
+      T* deg2;
+      Comp(T* d1, T* d2)
+	:deg1(d1), deg2(d2)
       {}
       
       bool operator() (T u, T v) 
-      {return deg[u] < deg[v];}
+      {
+	if (deg1[u]+deg2[u] < deg1[v]+deg2[v])
+	  return true;
+	if (deg1[u]+deg2[u] > deg1[v]+deg2[v])
+	  return false;
+	//assert (deg1[u]+deg2[u] == deg1[v]+deg2[v]);
+	return deg1[u] < deg1[v];
+      }
     };
     
 
@@ -249,15 +257,19 @@ namespace Cassis{
     ///returns the state of the game encoded in base 3.
     GameState::HashType GameState::hash() const
     {
-      Vertex * degree = new Vertex[nbVertex()];
+      Vertex * degree1 = new Vertex[nbVertex()];
+      Vertex * degree2 = new Vertex[nbVertex()];
       for (Vertex u = 0; u< nbVertex(); ++u)
 	{
-	  degree[u] = 0;
+	  degree1[u] = 0;
+	  degree2[u] = 0;
 	  for (Vertex v = 0; v< nbVertex(); ++v)
 	    {
 	      if (u == v) continue;
-	      if (edge(u,v) != UNCOLORED)
-		++degree[u];
+	      if (edge(u,v) != PLAYER1)
+		++degree1[u];
+	      if (edge(u,v) != PLAYER2)
+		++degree2[u];
 	    }
 	}
       
@@ -265,7 +277,7 @@ namespace Cassis{
       for (Vertex u=0; u<nbVertex(); ++u)
 	perm[u] = u;
             
-      Comp<Vertex> comp(degree);
+      Comp<Vertex> comp(degree1, degree2);
 
       std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp);
 
@@ -282,7 +294,8 @@ namespace Cassis{
 	  }
 	}
       delete[] perm;
-      delete[] degree;
+      delete[] degree1;
+      delete[] degree2;
 
       return h;
     }
