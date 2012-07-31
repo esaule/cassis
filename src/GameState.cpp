@@ -47,7 +47,7 @@ namespace Cassis{
     
     Edge GameState::nbEdge() const
     {
-      return 20;
+      return 15;
       
       // int ret=0;
       // for (int i=1; i <= nbVertex(); ++i)
@@ -82,7 +82,7 @@ namespace Cassis{
       board = NULL;
     }
     
-    //returns the offset of neighbors of i in a board. so \sum_{j=0}^i 6-j
+    //returns the offset of neighbors of i in a board. so \sum_{j=0}^i 5-j
     static Edge base(Vertex i)
     {
       switch (i)
@@ -90,15 +90,15 @@ namespace Cassis{
 	case 0:
 	  return 0;
 	case 1:
-	  return 6;
+	  return 5;
 	case 2:
-	  return 11;
+	  return 9;
 	case 3:
-	  return 15;
+	  return 12;
 	case 4:
-	  return 18;
+	  return 14;
 	case 5:
-	  return 20;
+	  return 15;
 	}
     }
     

@@ -5,7 +5,7 @@
 #include <map>
 #include "timestamp.hpp"
 
-const int NBROUND=15;
+const int NBROUND=14;
 
 std::map<Cassis::Engine::GameState::HashType, bool>* winning;
 std::map<Cassis::Engine::GameState::HashType,
@@ -117,6 +117,7 @@ int main()
 
   for (int i=0; i<=NBROUND; ++i)
     {
+      std::cout<<"round "<<i<<std::endl;
       std::cout<<"winning: "<<winning[i].size()<<std::endl;
       std::cout<<"move: "<<move[i].size()<<std::endl;
     }
