@@ -5,12 +5,14 @@
 #include <map>
 #include "timestamp.hpp"
 
-std::map<Cassis::Engine::GameState::HashType, bool> winning;
+const int NBROUND=15;
+
+std::map<Cassis::Engine::GameState::HashType, bool>* winning;
 std::map<Cassis::Engine::GameState::HashType,
 	 std::pair<Cassis::Engine::Vertex,
-		   Cassis::Engine::Vertex> > move;
+		   Cassis::Engine::Vertex> >* move;
 
-bool p1win(Cassis::Engine::GameState& gs)
+bool p1win(Cassis::Engine::GameState& gs, int round)
 {
   static long long int eval = 0;
   switch(gs.winner())
@@ -25,8 +27,8 @@ bool p1win(Cassis::Engine::GameState& gs)
       break;
     }
 
-  auto it = winning.find(gs.hash());
-  if (it != winning.end())
+  auto it = winning[round].find(gs.hash());
+  if (it != winning[round].end())
     return it->second;
 
   eval++;
@@ -46,16 +48,16 @@ bool p1win(Cassis::Engine::GameState& gs)
 	    {
 	      Cassis::Engine::GameState cp (gs);
 	      cp.play(i,j,player);
-	      if (p1win(cp))
+	      if (p1win(cp, round+1))
 		{
 		  auto h = gs.hash();
-		  winning[h] = true;
-		  move[h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (i,j);
+		  winning[round][h] = true;
+		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (i,j);
 		  return true; //winning move for player 1
 		}
 	    }
 	}
-      winning[gs.hash()] = false;
+      winning[round][gs.hash()] = false;
 
       return false; //could not find a winning combination for player 2
     }
@@ -69,16 +71,16 @@ bool p1win(Cassis::Engine::GameState& gs)
 	    {
 	      Cassis::Engine::GameState cp (gs);
 	      cp.play(i,j,player);
-	      if (! p1win(cp))
+	      if (! p1win(cp, round+1))
 		{
 		  auto h = gs.hash();
-		  winning[h] = false;
-		  move[h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (i,j);
+		  winning[round][h] = false;
+		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (i,j);
 		  return false; //winning move for player 2
 		}
 	    }
 	}
-      winning[gs.hash()] = true;      
+      winning[round][gs.hash()] = true;      
 
       return true; //could not find a winning combination for player 2
     }
@@ -92,8 +94,13 @@ int main()
 
   Cassis::Engine::GameState gs;
 
+  winning = new std::map<Cassis::Engine::GameState::HashType, bool>[NBROUND+1];
+  move= new  std::map<Cassis::Engine::GameState::HashType,
+		      std::pair<Cassis::Engine::Vertex,
+				Cassis::Engine::Vertex> > [NBROUND+1];
+
   try{
-    if (p1win(gs))
+    if (p1win(gs, 0))
       {
 	std::cout<<"p1 win"<<std::endl;
       }
@@ -108,9 +115,15 @@ int main()
 
   util::timestamp t2;
 
-  std::cout<<"winning: "<<winning.size()<<std::endl;
-  std::cout<<"move: "<<move.size()<<std::endl;
+  for (int i=0; i<=NBROUND; ++i)
+    {
+      std::cout<<"winning: "<<winning[i].size()<<std::endl;
+      std::cout<<"move: "<<move[i].size()<<std::endl;
+    }
   std::cout<<t2-t1<<" seconds"<<std::endl;
+
+  delete[] winning;
+  delete[] move;
 
   return 0;
 }
