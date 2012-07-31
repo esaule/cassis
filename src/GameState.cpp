@@ -22,9 +22,22 @@
 #endif
 
 #include <sstream>
+#include <algorithm>
 
 namespace Cassis{
   namespace Engine{
+    template <typename T>
+    struct Comp
+    {
+      T* deg;
+      Comp(T* d)
+	:deg(d)
+      {}
+      
+      bool operator() (T u, T v) 
+      {return deg[u] < deg[v];}
+    };
+    
 
     void GameState::validateVertex(Vertex i) const throw(InvalidParameter)
     {
@@ -236,12 +249,41 @@ namespace Cassis{
     ///returns the state of the game encoded in base 3.
     GameState::HashType GameState::hash() const
     {
-      HashType h;
-      for (int i=0; i<nbEdge(); ++i)
+      Vertex * degree = new Vertex[nbVertex()];
+      for (Vertex u = 0; u< nbVertex(); ++u)
 	{
-	  h *= 3;
-	  h += board[i];
+	  degree[u] = 0;
+	  for (Vertex v = 0; v< nbVertex(); ++v)
+	    {
+	      if (u == v) continue;
+	      if (edge(u,v) != UNCOLORED)
+		++degree[u];
+	    }
 	}
+      
+      Vertex* perm = new Vertex[nbVertex()];
+      for (Vertex u=0; u<nbVertex(); ++u)
+	perm[u] = u;
+            
+      Comp<Vertex> comp(degree);
+
+      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp);
+
+      HashType h;
+      for (Vertex i=0; i<nbVertex(); ++i)
+	{
+	  Vertex u = perm[i];
+	  for (Vertex j=i+1; j<nbVertex(); ++j)
+	  {
+	    Vertex v = perm[j];
+	    
+	    h *= 3;
+	    h += edge(u,v);
+	  }
+	}
+      delete[] perm;
+      delete[] degree;
+
       return h;
     }
 
