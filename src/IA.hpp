@@ -34,6 +34,7 @@ namespace Cassis
     ///DumbIA looks for the first edge that is free and take it.
     class DumbIA : public IA
     {
+    public:
       virtual void play(Engine::GameState& gs);
       virtual ~DumbIA();
     };
@@ -42,6 +43,7 @@ namespace Cassis
     ///not make a triangle and take it.
     class SimpleIA : public IA
     {
+    public:
       virtual void play(Engine::GameState& gs);
       virtual ~SimpleIA();
     };
@@ -49,6 +51,7 @@ namespace Cassis
     ///RandomIA looks randomly for the an edge that is free and take it.
     class RandomIA : public IA
     {
+    public:
       virtual void play(Engine::GameState& gs);
       virtual ~RandomIA();
     };
