@@ -121,6 +121,8 @@ namespace Cassis{
 	case 5:
 	  return 15;
 	}
+      throw BaseException();
+      return 0;
     }
     
     Color& GameState::edgeLoc(Vertex i, Vertex j)
@@ -158,6 +160,8 @@ namespace Cassis{
 	case 0: return PLAYER1;
 	case 1: return PLAYER2;
 	}
+      throw BaseException();
+      return UNCOLORED; //never reaches here.
     }
     
     Color GameState::winner(Vertex& x, Vertex& y, Vertex& z) const
@@ -254,8 +258,7 @@ namespace Cassis{
 	}
     }
 
-    ///returns the state of the game encoded in base 3.
-    GameState::HashType GameState::hash() const
+    void GameState::normalize_permutation(Vertex * perm) const
     {
       Vertex * degree1 = new Vertex[nbVertex()];
       Vertex * degree2 = new Vertex[nbVertex()];
@@ -273,15 +276,26 @@ namespace Cassis{
 	    }
 	}
       
-      Vertex* perm = new Vertex[nbVertex()];
       for (Vertex u=0; u<nbVertex(); ++u)
 	perm[u] = u;
-            
+      
       Comp<Vertex> comp(degree1, degree2);
+      
+      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp); 
+      
+      delete[] degree1;
+      delete[] degree2;
+    }
 
-      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp);
 
-      HashType h;
+    ///returns the state of the game encoded in base 3.
+    GameState::HashType GameState::hash() const
+    {
+      Vertex* perm = new Vertex[nbVertex()];
+
+      normalize_permutation(perm);
+
+      HashType h = 0;
       for (Vertex i=0; i<nbVertex(); ++i)
 	{
 	  Vertex u = perm[i];
@@ -294,8 +308,6 @@ namespace Cassis{
 	  }
 	}
       delete[] perm;
-      delete[] degree1;
-      delete[] degree2;
 
       return h;
     }

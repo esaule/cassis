@@ -127,6 +127,8 @@ namespace Cassis
 
 
       ///
+      void normalize_permutation(Vertex * perm) const;
+
       HashType hash() const;
 
       void unhash(HashType h);

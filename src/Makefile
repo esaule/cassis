@@ -1,4 +1,4 @@
-CXXFLAGS=--std=c++0x -g -O2
+CXXFLAGS=--std=c++0x -g -O2 -Wall
 LD=g++
 CC=g++
 
