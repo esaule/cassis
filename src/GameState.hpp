@@ -40,9 +40,9 @@ namespace Cassis
 
     enum Color
       {
-	UNCOLORED,
-	PLAYER1,
-	PLAYER2
+	UNCOLORED = 0,
+	PLAYER1 = 1,
+	PLAYER2 = 2
       };
 
     typedef int Vertex;
