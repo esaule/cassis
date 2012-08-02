@@ -12,6 +12,8 @@ std::map<Cassis::Engine::GameState::HashType,
 	 std::pair<Cassis::Engine::Vertex,
 		   Cassis::Engine::Vertex> >* move;
 
+Cassis::Engine::Vertex* perm;
+
 bool p1win(Cassis::Engine::GameState& gs, int round)
 {
   static long long int eval = 0;
@@ -52,7 +54,10 @@ bool p1win(Cassis::Engine::GameState& gs, int round)
 		{
 		  auto h = gs.hash();
 		  winning[round][h] = true;
-		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (i,j);
+		  
+		  gs.normalize_permutation(perm);
+
+		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (perm[i],perm[j]);
 		  return true; //winning move for player 1
 		}
 	    }
@@ -75,7 +80,10 @@ bool p1win(Cassis::Engine::GameState& gs, int round)
 		{
 		  auto h = gs.hash();
 		  winning[round][h] = false;
-		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (i,j);
+
+		  gs.normalize_permutation(perm);
+
+		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (perm[i],perm[j]);
 		  return false; //winning move for player 2
 		}
 	    }
@@ -93,6 +101,8 @@ int main()
   util::timestamp t1;
 
   Cassis::Engine::GameState gs;
+
+  perm = new Cassis::Engine::Vertex[gs.nbVertex()];
 
   winning = new std::map<Cassis::Engine::GameState::HashType, bool>[NBROUND+1];
   move= new  std::map<Cassis::Engine::GameState::HashType,
