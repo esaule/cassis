@@ -300,5 +300,31 @@ namespace Cassis{
       return h;
     }
 
+    void GameState::unhash(HashType h)
+    {
+      for (int i=nbEdge()-1; i>=0; --i)
+	{
+	  switch (h%3)
+	    {
+	    case 0:
+	      board[i] = UNCOLORED;
+	      break;
+	    case 1:
+	      board[i] = PLAYER1;
+	      break;
+	    case 2:
+	      board[i] = PLAYER2;
+	      break;
+	    }
+	  
+	  h /= 3;
+	}
+      
+      turn = 0;
+      for (int i=0; i<nbEdge(); ++i)
+	if (board[i] != UNCOLORED)
+	  ++turn;
+    }
+    
   }
 }

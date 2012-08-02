@@ -129,6 +129,7 @@ namespace Cassis
       ///
       HashType hash() const;
 
+      void unhash(HashType h);
 
       GameState();
       GameState(const GameState&);
