@@ -22,6 +22,7 @@
 #endif
 
 #include <sstream>
+#include "GameState.hpp"
 
 namespace Cassis{
   namespace Engine{
@@ -196,7 +197,7 @@ namespace Cassis{
       if (edgeLoc(i,j) != UNCOLORED)
 	{
 	  std::stringstream ss;
-	  ss<<"can not play. UNCOLORED";
+	  ss<<"can not play. The edge is not UNCOLORED";
 	  throw InvalidParameter(ss.str());
 	}
       if (whoseTurn() != c){
