@@ -17,6 +17,7 @@
 
 #include "IA.hpp"
 #include "stdlib.h"
+#include "GameState.hpp"
 
 Cassis::IA::IA::~IA()
 {}
@@ -67,8 +68,8 @@ void Cassis::IA::SimpleIA::play(Engine::GameState& gs)
 {
   Engine::Color whoami = gs.whoseTurn(); 
 
-  Engine::Vertex ufree;
-  Engine::Vertex vfree;
+  Engine::Vertex ufree = 0;
+  Engine::Vertex vfree = 0;
   
 
   //find the first free edge and take it
