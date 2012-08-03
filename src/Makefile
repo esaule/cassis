@@ -5,7 +5,7 @@ CC=g++
 
 cassis_cli: GameState.o cassis_cli.o
 
-bruteforce: GameState.o bruteforce.o GameState_hash.o
+bruteforce: GameState.o bruteforce.o GameState_hash.o IA.o GameState_serialize.o
 
 
 clean:
