@@ -57,6 +57,7 @@ namespace Cassis{
 	return deg[u] < deg[v];
       }
     };
+
     void GameState::normalize_permutation(Vertex * perm) const
     {
       Vertex * degree = new Vertex[nbVertex()];
@@ -103,6 +104,7 @@ namespace Cassis{
 	return deg1[u] < deg1[v];
       }
     };
+
     void GameState::normalize_permutation(Vertex * perm) const
     {
       Vertex * degree1 = new Vertex[nbVertex()];
@@ -138,22 +140,28 @@ namespace Cassis{
     GameState::HashType GameState::hash() const
     {
       Vertex* perm = new Vertex[nbVertex()];
+      Vertex* permminus1 = new Vertex[nbVertex()];
 
       normalize_permutation(perm);
+      for (Vertex i=0; i<nbVertex(); ++i)
+	{
+	  permminus1[perm[i]] = i;
+	}
 
       HashType h = 0;
       for (Vertex i=0; i<nbVertex(); ++i)
 	{
-	  Vertex u = perm[i];
+	  Vertex u = permminus1[i];
 	  for (Vertex j=i+1; j<nbVertex(); ++j)
 	  {
-	    Vertex v = perm[j];
+	    Vertex v = permminus1[j];
 	    
 	    h *= 3;
 	    h += edge(u,v);
 	  }
 	}
       delete[] perm;
+      delete[] permminus1;
 
       return h;
     }
