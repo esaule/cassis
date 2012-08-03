@@ -24,27 +24,14 @@
 #include <sstream>
 #include <algorithm>
 
+
+//0 for simple hash (no permutation)
+//1 for simple degree
+//2 for dual degree
+#define CASSIS_HASH_FUNCTION 2
+
 namespace Cassis{
   namespace Engine{
-    template <typename T>
-    struct Comp
-    {
-      T* deg1;
-      T* deg2;
-      Comp(T* d1, T* d2)
-	:deg1(d1), deg2(d2)
-      {}
-      
-      bool operator() (T u, T v) 
-      {
-	if (deg1[u]+deg2[u] < deg1[v]+deg2[v])
-	  return true;
-	if (deg1[u]+deg2[u] > deg1[v]+deg2[v])
-	  return false;
-	//assert (deg1[u]+deg2[u] == deg1[v]+deg2[v]);
-	return deg1[u] < deg1[v];
-      }
-    };
     
 
     void GameState::validateVertex(Vertex i) const throw(InvalidParameter)
@@ -258,6 +245,77 @@ namespace Cassis{
 	}
     }
 
+
+#if CASSIS_HASH_FUNCTION == 0
+    void GameState::normalize_permutation(Vertex * perm) const
+    {
+      for (Vertex u=0; u<nbVertex(); ++u)
+	perm[u] = u;
+    }
+
+#endif
+
+#if CASSIS_HASH_FUNCTION == 1
+    template <typename T>
+    struct Comp
+    {
+      T* deg;
+
+      Comp(T* d1)
+	:deg(d1)
+      {}
+      
+      bool operator() (T u, T v) 
+      {
+	return deg[u] < deg[v];
+      }
+    };
+    void GameState::normalize_permutation(Vertex * perm) const
+    {
+      Vertex * degree = new Vertex[nbVertex()];
+      for (Vertex u = 0; u< nbVertex(); ++u)
+	{
+	  degree[u] = 0;
+	  for (Vertex v = 0; v< nbVertex(); ++v)
+	    {
+	      if (u == v) continue;
+	      if (edge(u,v) != UNCOLORED)
+		++degree[u];
+	    }
+	}
+      
+      for (Vertex u=0; u<nbVertex(); ++u)
+	perm[u] = u;
+      
+      Comp<Vertex> comp(degree);
+      
+      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp); 
+      
+      delete[] degree;
+    }
+#endif
+
+
+#if CASSIS_HASH_FUNCTION == 2
+    template <typename T>
+    struct Comp
+    {
+      T* deg1;
+      T* deg2;
+      Comp(T* d1, T* d2)
+	:deg1(d1), deg2(d2)
+      {}
+      
+      bool operator() (T u, T v) 
+      {
+	if (deg1[u]+deg2[u] < deg1[v]+deg2[v])
+	  return true;
+	if (deg1[u]+deg2[u] > deg1[v]+deg2[v])
+	  return false;
+	//assert (deg1[u]+deg2[u] == deg1[v]+deg2[v]);
+	return deg1[u] < deg1[v];
+      }
+    };
     void GameState::normalize_permutation(Vertex * perm) const
     {
       Vertex * degree1 = new Vertex[nbVertex()];
@@ -286,6 +344,7 @@ namespace Cassis{
       delete[] degree1;
       delete[] degree2;
     }
+#endif
 
 
     ///returns the state of the game encoded in base 3.
@@ -311,6 +370,8 @@ namespace Cassis{
 
       return h;
     }
+
+    
 
     void GameState::unhash(HashType h)
     {
