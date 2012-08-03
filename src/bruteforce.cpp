@@ -21,6 +21,7 @@
 #include <stack>
 #include <map>
 #include "timestamp.hpp"
+#include "IA.hpp"
 
 const int NBROUND=14;
 
@@ -74,7 +75,8 @@ bool p1win(Cassis::Engine::GameState& gs, int round)
 		  
 		  gs.normalize_permutation(perm);
 
-		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (perm[i],perm[j]);
+		  move[round][h] = std::pair<Cassis::Engine::Vertex,
+					     Cassis::Engine::Vertex> (perm[i],perm[j]);
 		  return true; //winning move for player 1
 		}
 	    }
@@ -100,7 +102,8 @@ bool p1win(Cassis::Engine::GameState& gs, int round)
 
 		  gs.normalize_permutation(perm);
 
-		  move[round][h] = std::pair<Cassis::Engine::Vertex, Cassis::Engine::Vertex> (perm[i],perm[j]);
+		  move[round][h] = std::pair<Cassis::Engine::Vertex,
+					     Cassis::Engine::Vertex> (perm[i], perm[j]);
 		  return false; //winning move for player 2
 		}
 	    }
@@ -122,10 +125,10 @@ int main()
   perm = new Cassis::Engine::Vertex[gs.nbVertex()];
 
   winning = new std::map<Cassis::Engine::GameState::HashType, bool>[NBROUND+1];
-  move= new  std::map<Cassis::Engine::GameState::HashType,
-		      std::pair<Cassis::Engine::Vertex,
-				Cassis::Engine::Vertex> > [NBROUND+1];
-
+  move = new  std::map<Cassis::Engine::GameState::HashType,
+		       std::pair<Cassis::Engine::Vertex,
+				 Cassis::Engine::Vertex> > [NBROUND+1];
+  
   try{
     if (p1win(gs, 0))
       {
@@ -149,6 +152,44 @@ int main()
       std::cout<<"move: "<<move[i].size()<<std::endl;
     }
   std::cout<<t2-t1<<" seconds"<<std::endl;
+
+  //compression by simple
+  Cassis::IA::SimpleIA ia;
+  try
+  {
+    Cassis::Engine::GameState gs;
+    int useless = 0;
+
+    for (int i=0; i<=NBROUND; ++i)
+      {
+	std::cout<<"Round "<<i<<std::endl;
+	for (auto it = move[i].begin(); it != move[i].end(); ++it)
+	  {
+	    auto h = it->first;
+	    auto m = it->second;
+
+	    gs.unhash(h);
+	    std::cout<<(int) (gs.whoseTurn())<<std::endl;
+	    ia.play(gs);
+	    auto newh = gs.hash();
+
+	    gs.unhash(h);
+	    std::cout<<(int) (gs.whoseTurn())<<std::endl;
+	    gs.play(m.first, m.second, gs.whoseTurn());
+	    auto acth = gs.hash();
+
+	    std::cout<<acth<<"\t"<<newh<<std::endl;
+
+	    if (acth == newh)
+	      ++useless;
+	  }
+	std::cout<<"useless : "<<useless<<std::endl;
+      }
+  }
+  catch (Cassis::Engine::InvalidParameter ip)
+    {
+      std::cout<<ip.getMsg()<<std::endl;
+    }  
 
   delete[] winning;
   delete[] move;
