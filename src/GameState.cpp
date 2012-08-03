@@ -22,8 +22,6 @@
 #endif
 
 #include <sstream>
-#include <algorithm>
-
 
 namespace Cassis{
   namespace Engine{
@@ -210,34 +208,5 @@ namespace Cassis{
       edgeLoc(i,j) = c;
       turn++;
     }
-
-    int GameState::serializesize() const
-    {
-      return sizeof(int) + nbEdge()*sizeof(Color);
-    }
-    
-    void GameState::serialize(char* buffer) const
-    {
-      int* t = (int*) buffer;
-      *t = turn;
-      Color* c = (Color*) (buffer+sizeof(int));
-      for (int i=0; i<nbEdge(); ++i)
-	{
-	  *c = board[i];
-	  c++;
-	}
-    }
-
-    void GameState::deserialize(const char* buffer)
-    {
-      int* t = (int*) buffer;
-      turn = *t ;
-      Color* c = (Color*) (buffer+sizeof(int));
-      for (int i=0; i<nbEdge(); ++i)
-	{
-	  board[i] = *c;
-	  c++;
-	}
-    }    
   }
 }
