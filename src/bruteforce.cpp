@@ -76,7 +76,7 @@ bool p1win(Cassis::Engine::GameState& gs, int round)
 		  gs.normalize_permutation(perm);
 
 		  move[round][h] = std::pair<Cassis::Engine::Vertex,
-					     Cassis::Engine::Vertex> (perm[i],perm[j]);
+					     Cassis::Engine::Vertex> (perm[i], perm[j]);
 		  return true; //winning move for player 1
 		}
 	    }
@@ -145,11 +145,14 @@ int main()
 
   util::timestamp t2;
 
+  int totalmove = 0;
+
   for (int i=0; i<=NBROUND; ++i)
     {
       std::cout<<"round "<<i<<std::endl;
       std::cout<<"winning: "<<winning[i].size()<<std::endl;
       std::cout<<"move: "<<move[i].size()<<std::endl;
+      totalmove += move[i].size();
     }
   std::cout<<t2-t1<<" seconds"<<std::endl;
 
@@ -158,10 +161,12 @@ int main()
   try
   {
     Cassis::Engine::GameState gs;
-    int useless = 0;
 
+    int totaluseless = 0;
     for (int i=0; i<=NBROUND; ++i)
       {
+	int useless = 0;
+
 	std::cout<<"Round "<<i<<std::endl;
 	for (auto it = move[i].begin(); it != move[i].end(); ++it)
 	  {
@@ -183,8 +188,10 @@ int main()
 	    if (acth == newh)
 	      ++useless;
 	  }
-	std::cout<<"useless : "<<useless<<std::endl;
+	std::cout<<"useless : "<<useless<<" over "<<move[i].size()<<std::endl;
+	totaluseless += useless;
       }
+    std::cout<<"totaluseless : "<<totaluseless<<" over "<<totalmove<<std::endl;
   }
   catch (Cassis::Engine::InvalidParameter ip)
     {
