@@ -144,6 +144,11 @@ namespace Cassis{
       throw BaseException();
       return UNCOLORED; //never reaches here.
     }
+
+    Edge GameState::whichTurn() const
+    {
+      return turn;
+    }
     
     Color GameState::winner(Vertex& x, Vertex& y, Vertex& z) const
     {

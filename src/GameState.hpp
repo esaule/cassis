@@ -113,6 +113,8 @@ namespace Cassis
       ///@return true is anybody won
       bool gameOver() const;
 
+      ///@brief returns which turn it is (first turn is 0)
+      Edge whichTurn() const;
 
       ///@brief returns the color of the player whose turn it is
       ///@return either PLAYER1 or PLAYER2

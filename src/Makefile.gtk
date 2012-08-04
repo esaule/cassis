@@ -7,12 +7,10 @@ VERSION_NUMBER=\"`git describe --tags``if git diff --exit-code > /dev/null ; the
 
 CC = gcc -g -Wall
 CFLAGS += $(GTK_INCLUDE)
-CXXFLAGS += $(GTK_INCLUDE) -DVERSION_NUMBER=$(VERSION_NUMBER)
+CXXFLAGS += $(GTK_INCLUDE) -DVERSION_NUMBER=$(VERSION_NUMBER) -std=gnu++0x
 LDFLAGS += $(GTK_LIB) $(X11_LIB)
 
-OBJS = cassis_gtk_cairo.o GameState.o IA.o SpriteCollection_cairo.o
-
-
+OBJS = cassis_gtk_cairo.o GameState.o GameState_hash.o GameState_serialize.o IA.o SpriteCollection_cairo.o IA_brute.o
 
 CC=g++
 LD=g++

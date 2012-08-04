@@ -81,7 +81,7 @@ public:
   CairoMenuSelector()
     :current(NULL)
   {
-    nboption = 4;
+    nboption = 5;
     interoption_height = .05;
     optionheight = .1;
     optionwidth = .7;
@@ -111,7 +111,8 @@ public:
     tags[0] = "Dumb";
     tags[1] = "Easy";
     tags[2] = "Medium";
-    tags[3] = "Help";
+    tags[3] = "Impossible";
+    tags[4] = "Help";
 
     helptext = "Each player at her turn adds an edge between two points. The first player making a triangle LOSES. Do not connect 3 points together with 3 edges and you will win!";
     copyrighttext = COPYRIGHTTEXT;
@@ -134,13 +135,13 @@ public:
 
   void clickon(int opt)
   {
-    if (opt < 3)
+    if (opt < 4)
       {
 	currentobj = GAME;
 	current = new CassisDisplay(opt);
       }
 
-    if (opt == 3)
+    if (opt == 4)
       {
 	currentobj = HELP;
 	current = new CairoTextDisplay(helptext);

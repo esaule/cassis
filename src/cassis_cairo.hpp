@@ -228,7 +228,7 @@ private:
 	ia = new Cassis::IA::RandomIA();
 	break;
       case 3:
-	ia = new Cassis::IA::RandomIA();
+	ia = new Cassis::IA::BruteIA();
 	break;
       default:
 	ia = new Cassis::IA::RandomIA();

@@ -19,6 +19,7 @@
 #define CASSIS_IA
 
 #include "GameState.hpp"
+#include <map>
 
 namespace Cassis
 {
@@ -56,6 +57,29 @@ namespace Cassis
       virtual ~RandomIA();
     };
 
+    ///BruteIA looks at all the combination and picks the best one
+    class BruteIA : public IA
+    {
+      int NBROUND;
+      
+      std::map<Cassis::Engine::GameState::HashType, bool>* winning;
+      std::map<Cassis::Engine::GameState::HashType,
+	       std::pair<Cassis::Engine::Vertex,
+			 Cassis::Engine::Vertex> >* move;
+      
+      Cassis::Engine::Vertex* perm;
+      Cassis::Engine::Vertex* permminus1;
+
+      //used to initialize winning and move
+      bool p1win(Cassis::Engine::GameState& gs, int round);
+      
+
+    public:
+      BruteIA();
+      virtual void play(Engine::GameState& gs);
+      virtual ~BruteIA();
+    };
+    
   }
 }
 
