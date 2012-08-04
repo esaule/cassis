@@ -146,6 +146,7 @@ namespace Cassis{
       for (Vertex i=0; i<nbVertex(); ++i)
 	{
 	  permminus1[perm[i]] = i;
+	  //	  permminus1[i] = perm[i];
 	}
 
       HashType h = 0;
