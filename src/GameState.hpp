@@ -135,6 +135,15 @@ namespace Cassis
       HashType hash() const;
       void unhash(HashType h);
 
+      void compute_degrees(Vertex* deg1, Vertex* deg2, Vertex* deg) const;
+
+      ///if gs is permuted by perm, is the graph this?
+      bool isomorph_check(const GameState &gs, Vertex* perm) const;
+
+
+      //@returns true if isomorph to gs
+      //@param perm contain the permutation to tranform gs in this if they are isomorph
+      bool isomorph(const GameState& gs, Vertex* perm) const;
 
       GameState();
       GameState(const GameState&);
