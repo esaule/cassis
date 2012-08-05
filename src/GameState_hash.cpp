@@ -34,10 +34,10 @@ namespace Cassis{
 #define CASSIS_HASH_FUNCTION 2
 
 #if CASSIS_HASH_FUNCTION == 0
-    void GameState::normalize_permutation(Vertex * perm) const
+    void GameState::normalize_inverse_permutation(Vertex * perminv) const
     {
       for (Vertex u=0; u<nbVertex(); ++u)
-	perm[u] = u;
+	perminv[u] = u;
     }
 
 #endif
@@ -58,9 +58,11 @@ namespace Cassis{
       }
     };
 
-    void GameState::normalize_permutation(Vertex * perm) const
+    void GameState::normalize_permutation(Vertex * perminv) const
     {
       Vertex * degree = new Vertex[nbVertex()];
+      
+      
       for (Vertex u = 0; u< nbVertex(); ++u)
 	{
 	  degree[u] = 0;
@@ -73,12 +75,14 @@ namespace Cassis{
 	}
       
       for (Vertex u=0; u<nbVertex(); ++u)
-	perm[u] = u;
+	perminv[u] = u;
       
       Comp<Vertex> comp(degree);
       
-      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp); 
-      
+
+      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
+
+      delete[] perminv;
       delete[] degree;
     }
 #endif
@@ -105,7 +109,7 @@ namespace Cassis{
       }
     };
 
-    void GameState::normalize_permutation(Vertex * perm) const
+    void GameState::normalize_inverse_permutation(Vertex * perminv) const
     {
       Vertex * degree1 = new Vertex[nbVertex()];
       Vertex * degree2 = new Vertex[nbVertex()];
@@ -124,45 +128,49 @@ namespace Cassis{
 	}
       
       for (Vertex u=0; u<nbVertex(); ++u)
-	perm[u] = u;
+	perminv[u] = u;
       
       Comp<Vertex> comp(degree1, degree2);
       
-      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perm, perm+nbVertex(), comp); 
-      
+      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
+
       delete[] degree1;
       delete[] degree2;
     }
 #endif
 
+    void GameState::normalize_permutation(Vertex * perm) const
+    {
+      Vertex * perminv = new Vertex[nbVertex()];
+
+      normalize_inverse_permutation(perminv);
+
+      for (Vertex u=0; u<nbVertex(); ++u)
+	perm[perminv[u]]=u;
+      
+      delete[] perminv;
+    }
 
     ///returns the state of the game encoded in base 3.
     GameState::HashType GameState::hash() const
     {
-      Vertex* perm = new Vertex[nbVertex()];
-      Vertex* permminus1 = new Vertex[nbVertex()];
+      Vertex * perminv = new Vertex[nbVertex()];
 
-      normalize_permutation(perm);
-      for (Vertex i=0; i<nbVertex(); ++i)
-	{
-	  permminus1[perm[i]] = i;
-	  //	  permminus1[i] = perm[i];
-	}
+      normalize_inverse_permutation(perminv);
 
       HashType h = 0;
       for (Vertex i=0; i<nbVertex(); ++i)
 	{
-	  Vertex u = permminus1[i];
+	  Vertex u = perminv[i];
 	  for (Vertex j=i+1; j<nbVertex(); ++j)
 	  {
-	    Vertex v = permminus1[j];
+	    Vertex v = perminv[j];
 	    
 	    h *= 3;
 	    h += edge(u,v);
 	  }
 	}
-      delete[] perm;
-      delete[] permminus1;
+      delete[] perminv;
 
       return h;
     }

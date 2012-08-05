@@ -128,12 +128,13 @@ namespace Cassis
       void play(Vertex i, Vertex j, Color c) throw (InvalidParameter);
 
 
-      ///
+      ///for hashing purposes
       void normalize_permutation(Vertex * perm) const;
+      void normalize_inverse_permutation(Vertex * invperm) const;
 
       HashType hash() const;
-
       void unhash(HashType h);
+
 
       GameState();
       GameState(const GameState&);
