@@ -28,7 +28,7 @@ VERSION_NUMBER=\"`git describe --tags``if git diff --exit-code > /dev/null ; the
 
 LOCAL_MODULE    := cassis
 LOCAL_CFLAGS    := -O2 -I. $(CAIRO_COMPILE) -DANDROID=1  -DVERSION_NUMBER=$(VERSION_NUMBER)
-LOCAL_CPPFLAGS    := -O2 --std=gnu++0x -I. $(CAIRO_COMPILE) -fexceptions -DNOSTRING -DUSE_MYMAP  -DVERSION_NUMBER=$(VERSION_NUMBER)
+LOCAL_CPPFLAGS    := -O2 --std=gnu++0x -I. $(CAIRO_COMPILE) -fexceptions -DNOSTRING -DNOMAP -DUSE_MYMAP  -DVERSION_NUMBER=$(VERSION_NUMBER)
 LOCAL_LDLIBS    := -lm -llog -landroid -lz
 LOCAL_SRC_FILES := cassis.cpp IA.cpp GameState.cpp GameState_serialize.cpp GameState_hash.cpp IA_brute.cpp SpriteCollection_cairo.cpp
 LOCAL_STATIC_LIBRARIES := android_native_app_glue # libcairo libpixman

@@ -18,6 +18,8 @@
 #ifndef MYSTRING_H
 #define MYSTRING_H
 
+#include <string.h>
+
 class MyString
 {
   typedef int size_t;
@@ -43,7 +45,6 @@ public:
     actsize = ms.actsize;
     memcpy(str, ms, sizeof(char)*(actsize+1));
   }
-
 
   MyString()
     :str(new char[1]), allocsize(1), actsize(0)

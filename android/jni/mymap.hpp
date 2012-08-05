@@ -19,6 +19,7 @@
 #define MYMAP_HPP
 
 #include <utility>
+#include <assert.h>
 
 template<typename A>
 class myset

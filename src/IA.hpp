@@ -19,7 +19,11 @@
 #define CASSIS_IA
 
 #include "GameState.hpp"
+#ifndef NOMAP
 #include <map>
+#else
+#include "mymap.hpp"
+#endif
 
 namespace Cassis
 {
@@ -60,12 +64,20 @@ namespace Cassis
     ///BruteIA looks at all the combination and picks the best one
     class BruteIA : public IA
     {
-      int NBROUND;
-      
+#ifdef NOMAP
+      mymap<Cassis::Engine::GameState::HashType, bool>* winning;
+      mymap<Cassis::Engine::GameState::HashType,
+	    std::pair<Cassis::Engine::Vertex,
+		      Cassis::Engine::Vertex> >* move;
+#else
+
       std::map<Cassis::Engine::GameState::HashType, bool>* winning;
       std::map<Cassis::Engine::GameState::HashType,
 	       std::pair<Cassis::Engine::Vertex,
 			 Cassis::Engine::Vertex> >* move;
+#endif
+      int NBROUND;
+      
       
       Cassis::Engine::Vertex* perm;
       Cassis::Engine::Vertex* permminus1;

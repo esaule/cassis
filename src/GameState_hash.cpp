@@ -21,9 +21,12 @@
 #define NULL 0
 #endif
 
-#include <sstream>
+#ifndef ANDROID
 #include <algorithm>
-
+using std::sort;
+#else
+#include "mysort.hpp"
+#endif
 
 namespace Cassis{
   namespace Engine{
@@ -80,7 +83,7 @@ namespace Cassis{
       Comp<Vertex> comp(degree);
       
 
-      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
+      sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
 
       delete[] perminv;
       delete[] degree;
@@ -132,7 +135,7 @@ namespace Cassis{
       
       Comp<Vertex> comp(degree1, degree2);
       
-      std::sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
+      sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
 
       delete[] degree1;
       delete[] degree2;

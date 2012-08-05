@@ -21,7 +21,12 @@
 #define NULL 0
 #endif
 
+#ifndef ANDROID
 #include <sstream>
+using std::stringstream;
+#else
+#include "mysstream.hpp"
+#endif
 #include "GameState.hpp"
 #include <assert.h>
 
@@ -32,12 +37,12 @@ namespace Cassis{
     void GameState::validateVertex(Vertex i) const throw(InvalidParameter)
     {
       if (i < 0) {
-	std::stringstream ss;
+	stringstream ss;
 	ss<<"invalid vertex: "<<i;
 	throw InvalidParameter(ss.str());
       }
       if (i >= nbVertex()) {
-	std::stringstream ss;
+	stringstream ss;
 	ss<<"invalid vertex: "<<i;
 	throw InvalidParameter(ss.str());
       }
@@ -121,7 +126,7 @@ namespace Cassis{
     {
       if (i == j)
 	{
-	  std::stringstream ss;
+	  stringstream ss;
 	  ss<<"invalid edge: "<<i<<" "<<j;
 	  throw InvalidParameter(ss.str());
 	}
@@ -187,7 +192,7 @@ namespace Cassis{
     {
       if (i == j)
 	{
-	  std::stringstream ss;
+	  stringstream ss;
 	  ss<<"can t play. invalid edge "<<i<<" "<<j;
 	  throw InvalidParameter(ss.str());
 	}
@@ -202,12 +207,12 @@ namespace Cassis{
       //assert (i<j);
       if (edgeLoc(i,j) != UNCOLORED)
 	{
-	  std::stringstream ss;
+	  stringstream ss;
 	  ss<<"can not play. The edge is not UNCOLORED";
 	  throw InvalidParameter(ss.str());
 	}
       if (whoseTurn() != c){
-	std::stringstream ss;
+	stringstream ss;
 	ss<<"can not play. it is not "<<c<<" turn";
 	throw InvalidParameter(ss.str());
       }

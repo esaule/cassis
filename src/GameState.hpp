@@ -20,7 +20,12 @@
 
 #include "serializable.hpp"
 #include "exception.hpp"
+
+#ifndef NOSTRING
 #include <string>
+#else
+#include "mystring.hpp"
+#endif
 
 namespace Cassis
 {
@@ -28,14 +33,20 @@ namespace Cassis
   {
     class InvalidParameter : public BaseException
     {
-      std::string s;
+#ifdef NOSTRING
+      typedef MyString string;
+#else
+      typedef std::string string;
+#endif
+      string s;
+
 
     public:
       InvalidParameter();
-      InvalidParameter(std::string msg)
+      InvalidParameter(string msg)
 	:s(msg)
       {}
-      const std::string& getMsg() const{return s;}
+      const string& getMsg() const{return s;}
     };
 
     enum Color
