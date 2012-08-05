@@ -26,6 +26,7 @@ class myset
 {
 public:
   typedef int size_t;
+  typedef A* iterator;
 
 protected:
   A* buffer;
@@ -36,6 +37,15 @@ public:
   myset()
     :buffer(NULL), allocsize(0), actsize(0)
   {
+  }
+
+  iterator begin()
+  {
+    return buffer;
+  }
+  iterator end()
+  {
+    return buffer+actsize;
   }
 
   void reserve (size_t size)
@@ -87,6 +97,7 @@ public:
 template<typename A, typename B>
 class mymap
 {
+  typedef typename std::pair<A,B>* iterator;
   myset< std::pair<A,B> > buf;
 public:
   typedef int size_t;
@@ -140,6 +151,28 @@ public:
 
     auto ind = buf.insert( p );
     return buf[ind].second;
+  }
+
+  iterator begin()
+  {
+    return buf.begin();
+  }
+
+  iterator end()
+  {
+    return buf.end();
+  }
+
+  iterator find (const A& a)
+  {
+    auto it = begin();
+    while (it != end())
+      {
+	if (it->first == a)
+	  break;
+	++it;
+      }
+    return it;
   }
 };
 

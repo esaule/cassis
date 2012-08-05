@@ -33,10 +33,7 @@
 #include "cassis_cairo.hpp"
 #include "cairo_menu_selector.hpp"
 
-#define  LOG_TAG    "cassis"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#include "log.hpp"
 
 bool app_has_focus = false;
 int  tick          = 0;
@@ -71,8 +68,12 @@ void android_main(struct android_app* app) {
     CairoMenuSelector cms;
     cd = &cms;
 
+    Log::log<<COPYRIGHTTEXT;
+    Log::log.commit();
+
     if (app->savedState != NULL) {
-      // We are starting with a previous saved state; restore from it.
+      Log::log<<"We are starting with a previous saved state; restore from it.";
+      Log::log.commit();
       try
 	{
 	  cms.deserialize((char*)app->savedState);
@@ -82,6 +83,8 @@ void android_main(struct android_app* app) {
 	  LOGE("Can not deserialize state! Quitting");
 	  return;
 	}
+      Log::log<<"Done!";
+      Log::log.commit();
     }
 
     while (1) {
@@ -162,16 +165,16 @@ static int32_t handle_input(struct android_app* app, AInputEvent* event) {
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
         app_has_focus = true;
 
-	LOGI("Motion Event, pressed = %d", (pressed?1:0));
+	//	LOGI("Motion Event, pressed = %d", (pressed?1:0));
 	
 	for (int i=0; i< AMotionEvent_getPointerCount(event); ++i)
 	  {
 	    int action = AMotionEvent_getAction(event);
-	    LOGI("Motion Event, action = %d", action);
+	    //  LOGI("Motion Event, action = %d", action);
 	    if ((action & AMOTION_EVENT_ACTION_DOWN)
 		||(action & AMOTION_EVENT_ACTION_POINTER_DOWN))
 	      {
-		LOGI("In");
+		//LOGI("In");
 		if (!pressed)
 		  {
 		    pressed = true;

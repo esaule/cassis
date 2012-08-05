@@ -79,6 +79,7 @@ public:
     reserve(ms.actsize + this->actsize);
     
     memcpy(str+actsize, ms.str, sizeof(char)*(ms.actsize+1));
+    actsize += ms.actsize;
   }
 
   bool operator== (const MyString& ms) const

@@ -26,7 +26,7 @@ template <class T> void swap(T& a, T& b)
 {
   T tmp = a;
   a = b;
-  b = a;
+  b = tmp;
 }
 
 template<class iterator, class comparator>
@@ -68,9 +68,26 @@ void quicksort(iterator low, iterator high, comparator& comp )
 }
 
 template<class iterator, class comparator>
+void bubblesort(iterator low, iterator high, comparator& comp )
+{
+  bool done = false;
+  while (!done)
+    {
+      done = true;
+      for (iterator it = low; it+1 != high; ++it)
+	{
+	  if (comp(*it, *(it+1))) {
+	    swap(*it, *(it+1));
+	    done = false;
+	  }
+	}
+    }
+}
+
+template<class iterator, class comparator>
 void sort(iterator low, iterator high, comparator& comp)
 {
-  quicksort(low, high, comp);
+  bubblesort(low, high, comp);
 }
 
 #endif

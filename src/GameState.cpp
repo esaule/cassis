@@ -193,7 +193,7 @@ namespace Cassis{
       if (i == j)
 	{
 	  stringstream ss;
-	  ss<<"can t play. invalid edge "<<i<<" "<<j;
+	  ss<<"can't play. invalid edge "<<i<<" "<<j;
 	  throw InvalidParameter(ss.str());
 	}
       validateVertex(i);

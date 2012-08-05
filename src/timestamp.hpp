@@ -38,12 +38,12 @@
 #define TIMESTAMP_ERIK_H__
 
 #include <sys/time.h>
-#include <iostream>
+//#include <iostream>
 #include <stdio.h>
 
 namespace util{class timestamp;}
 
-static std::ostream& operator<< (std::ostream&, const util::timestamp&);
+static ostream& operator<< (ostream& out, const util::timestamp& t);
 
 namespace util
 {
@@ -149,12 +149,13 @@ namespace util
       return *this;
     }
 
-    friend std::ostream& ::operator<< (std::ostream&, const util::timestamp&);
+    friend ostream& ::operator<< (ostream&, const util::timestamp&);
   };
 
 }
 
-static std::ostream& operator<< (std::ostream& out, const util::timestamp& t)
+
+static ostream& operator<< (ostream& out, const util::timestamp& t)
 {
   char microsecval[7];
 
