@@ -49,6 +49,8 @@ class Log: public ostream
   stringstream ss;
 #endif
 public:
+  struct c {int a;};
+  static c endl; //end of log tag
   
   static Log log;
 
@@ -95,5 +97,12 @@ public:
   }
 #endif
 };
+
+static ostream& operator<< (ostream& o, Log::c & c)
+{
+  Log& l = (Log&) o;
+  l.commit();
+  return o;
+}
 
 #endif
