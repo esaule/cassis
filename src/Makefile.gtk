@@ -10,7 +10,7 @@ CFLAGS += $(GTK_INCLUDE)
 CXXFLAGS += $(GTK_INCLUDE) -DVERSION_NUMBER=$(VERSION_NUMBER) -std=gnu++0x
 LDFLAGS += $(GTK_LIB) $(X11_LIB)
 
-OBJS = cassis_gtk_cairo.o GameState.o GameState_hash.o GameState_serialize.o IA.o SpriteCollection_cairo.o IA_brute.o
+OBJS = cassis_gtk_cairo.o GameState.o GameState_hash.o GameState_serialize.o IA.o SpriteCollection_cairo.o IA_brute.o log.o
 
 CC=g++
 LD=g++

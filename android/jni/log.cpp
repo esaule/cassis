@@ -1,3 +1,1 @@
-#include "log.hpp"
-
-Log Log::log;
+../../src/log.cpp

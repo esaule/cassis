@@ -29,19 +29,21 @@ template <class T> void swap(T& a, T& b)
   b = tmp;
 }
 
-template<class iterator, class comparator>
-iterator partition(iterator low, iterator high, comparator& comp)
+template<class iterator, class lessthancomparator>
+iterator partition(iterator low, iterator high, lessthancomparator& comp)
 {
+  typename iterator_traits<iterator>::value_type num = *low;
+
   iterator i = low+1;
   iterator j = high;
   
   while( 1 )
     {
       
-      while( i<high && comp(*i,*low) )
+      while( i<high && comp(*i,num) )
 	i++;
       
-      while( comp(*low,*j) )
+      while( comp(num,*j) )
 	j--;
       
       if( comp(*i, *j) )
@@ -54,21 +56,22 @@ iterator partition(iterator low, iterator high, comparator& comp)
     }
 }
 
-template<class iterator, class comparator>
-void quicksort(iterator low, iterator high, comparator& comp )
+template<class iterator, class lessthancomparator>
+void quicksort(iterator low, iterator high, lessthancomparator& comp )
 {
   iterator j;
   
   if( low<high )
     {
-      j = partition<iterator, comparator>(low, high, comp);
+      j = partition<iterator, lessthancomparator>(low, high, comp);
       quicksort (low, (j-1), comp);
       quicksort ((j+1), high, comp);
     }
 }
 
-template<class iterator, class comparator>
-void bubblesort(iterator low, iterator high, comparator& comp )
+///sort the range between low (included) and high (excluded), using the comp as a comparator function. The algorithm is bubblesort
+template<class iterator, class lessthancomparator>
+void bubblesort(iterator low, iterator high, lessthancomparator& comp )
 {
   bool done = false;
   while (!done)
@@ -84,10 +87,12 @@ void bubblesort(iterator low, iterator high, comparator& comp )
     }
 }
 
-template<class iterator, class comparator>
-void sort(iterator low, iterator high, comparator& comp)
+///sort the range between low (included) and high (excluded), using the comp as a comparator function
+template<class iterator, class lessthancomparator>
+void sort(iterator low, iterator high, lessthancomparator& comp)
 {
   bubblesort(low, high, comp);
+  //quicksort(low, high-1, comp);
 }
 
 #endif
