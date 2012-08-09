@@ -53,6 +53,8 @@ public:
     if (size > allocsize)
       {
 	A* t = new A[size];
+	for (int i=0; i<actsize;++i)
+	  t[i] = buffer[i];
 	if (buffer != NULL)
 	  delete[] buffer;
 	buffer = t;
