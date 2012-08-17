@@ -82,8 +82,8 @@ public:
     :current(NULL)
   {
     nboption = 5;
-    interoption_height = .05;
-    optionheight = .1;
+    interoption_height = .02;
+    optionheight = .095;
     optionwidth = .7;
 
     currentobj = NONE;
@@ -111,7 +111,7 @@ public:
     tags[0] = "Dumb";
     tags[1] = "Easy";
     tags[2] = "Medium";
-    tags[3] = "Impossible";
+    tags[3] = "Expert";
     tags[4] = "Help";
 
     helptext = "Each player at her turn adds an edge between two points. The first player making a triangle LOSES. Do not connect 3 points together with 3 edges and you will win!";

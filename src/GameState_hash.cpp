@@ -61,7 +61,7 @@ namespace Cassis{
       }
     };
 
-    void GameState::normalize_permutation(Vertex * perminv) const
+    void GameState::normalize_inverse_permutation(Vertex * perminv) const
     {
       Vertex * degree = new Vertex[nbVertex()];
       
@@ -85,7 +85,6 @@ namespace Cassis{
 
       sort<Vertex*, Comp<Vertex> >((Vertex*)perminv, perminv+nbVertex(), comp); 
 
-      delete[] perminv;
       delete[] degree;
     }
 #endif
